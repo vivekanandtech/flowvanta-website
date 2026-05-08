@@ -717,6 +717,7 @@ footer {
     <div class="nav-links-wrap">
       <ul class="nav-links">
         <li><a href="#services">Services</a></li>
+        <li><a href="#reviews">Reviews</a></li>
         <li><a href="#about">About</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
@@ -811,33 +812,66 @@ footer {
         <div class="video-eyebrow">Watch the live demo — AI Email Automation System</div>
 
         <div class="loom-wrap">
-          <!--
-            ── ADD YOUR LOOM VIDEO ──────────────────────────────────────
-            1. Open your Loom recording → Share → Copy link
-            2. Your link: https://www.loom.com/share/XXXXXX
-            3. Change /share/ to /embed/ → https://www.loom.com/embed/XXXXXX
-            4. Uncomment the <iframe> below and paste the URL.
-            5. Delete the <div class="loom-ph"> block.
-            ─────────────────────────────────────────────────────────────
-
           <iframe
-            src="https://www.loom.com/embed/PASTE_YOUR_LOOM_ID_HERE"
-            title="Flowvanta — AI Email Automation Demo"
-            frameborder="0" allow="autoplay; fullscreen" allowfullscreen>
+            src="https://www.youtube.com/embed/Y3Gacl7Mby0"
+            title="Flowvanta — Intro & Overview"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen>
           </iframe>
-          -->
-
-          <!-- Remove this placeholder block once you add Loom above -->
-          <div class="loom-ph">
-            <div class="loom-ph-icon">▶</div>
-            <p>Your Loom demo goes here.<br>See instructions in index.html → PASTE_YOUR_LOOM_ID_HERE</p>
-          </div>
         </div>
       </div>
 
     </div><!-- /hero-inner -->
   </div>
 </section>
+
+<!-- ══════════════ TRUSTED BY ══════════════ -->
+<section id="clients" style="padding-block:48px;background:var(--white);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+  <div class="container">
+    <p style="text-align:center;font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:0.18em;text-transform:uppercase;color:var(--t3);margin-bottom:28px">Trusted by teams at</p>
+    <div style="display:flex;flex-wrap:wrap;gap:0;justify-content:center;align-items:stretch;border:1px solid var(--border);border-radius:14px;overflow:hidden;max-width:860px;margin:0 auto;box-shadow:var(--shadow-sm)">
+      <div class="client-cell">
+        <div class="client-logo-mark" style="background:linear-gradient(135deg,#0057FF,#003DB5)">iM</div>
+        <div class="client-name">InCred Money</div>
+        <div class="client-sector">FinTech</div>
+      </div>
+      <div class="client-cell">
+        <div class="client-logo-mark" style="background:linear-gradient(135deg,#6929C4,#491D8B)">SA</div>
+        <div class="client-name">Scale AI</div>
+        <div class="client-sector">AI / Data</div>
+      </div>
+      <div class="client-cell">
+        <div class="client-logo-mark" style="background:linear-gradient(135deg,#0F7B6C,#085145)">OL</div>
+        <div class="client-name">Outlier</div>
+        <div class="client-sector">AI Training</div>
+      </div>
+      <div class="client-cell">
+        <div class="client-logo-mark" style="background:linear-gradient(135deg,#E14D2A,#9C1B04)">LB</div>
+        <div class="client-name">Labelbox</div>
+        <div class="client-sector">AI Data Platform</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+.client-cell {
+  flex:1; min-width:160px; padding:24px 20px;
+  display:flex; flex-direction:column; align-items:center; gap:8px;
+  border-right:1px solid var(--border); background:var(--white);
+  transition:background .2s;
+}
+.client-cell:last-child { border-right:none }
+.client-cell:hover { background:var(--bg-alt) }
+.client-logo-mark {
+  width:44px; height:44px; border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+  font-weight:800; font-size:14px; color:#fff; letter-spacing:-0.02em;
+}
+.client-name { font-size:0.9375rem; font-weight:700; color:var(--t1); letter-spacing:-0.01em }
+.client-sector { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--t3) }
+</style>
 
 <!-- ══════════════ SERVICES ══════════════ -->
 <section id="services">
@@ -872,15 +906,13 @@ footer {
         </div>
         <div class="svc-vid-wrap">
           <div class="loom-wrap">
-            <!--
-              Uncomment & paste your n8n demo Loom ID here:
-            <iframe src="https://www.loom.com/embed/N8N_DEMO_LOOM_ID"
-              title="n8n Workflow Demo" frameborder="0" allowfullscreen></iframe>
-            -->
-            <div class="loom-ph">
-              <div class="loom-ph-icon">⚡</div>
-              <p>n8n workflow demo → N8N_DEMO_LOOM_ID</p>
-            </div>
+            <iframe
+              src="https://www.youtube.com/embed/8teylMe5rP4?start=36"
+              title="Flowvanta — AI Email Automation System Demo"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen>
+            </iframe>
           </div>
         </div>
       </div>
@@ -905,14 +937,11 @@ footer {
         <!-- Loom for AI demo -->
         <div class="svc-vid-wrap">
           <div class="loom-wrap">
-            <!--
-            <iframe src="https://www.loom.com/embed/AI_DEMO_LOOM_ID"
-              title="AI System Demo" frameborder="0" allowfullscreen></iframe>
-            -->
-            <div class="loom-ph">
-              <div class="loom-ph-icon">🤖</div>
-              <p>AI demo → AI_DEMO_LOOM_ID</p>
-            </div>
+            <iframe
+              src="https://www.loom.com/embed/964e8312ee524b4894c242f37c0569a4"
+              title="AI Support Triage Demo"
+              frameborder="0" allowfullscreen>
+            </iframe>
           </div>
         </div>
       </div>
@@ -932,6 +961,16 @@ footer {
             <span class="tag">Airtable</span>
             <span class="tag">Notion</span>
             <span class="tag">Slack</span>
+          </div>
+        </div>
+        <!-- Content Hub demo -->
+        <div class="svc-vid-wrap">
+          <div class="loom-wrap">
+            <iframe
+              src="https://www.loom.com/embed/66ecf46961824a039492a377a3df0059"
+              title="AI Content Hub & Distribution Demo"
+              frameborder="0" allowfullscreen>
+            </iframe>
           </div>
         </div>
       </div>
@@ -987,6 +1026,80 @@ footer {
   </div>
 </section>
 
+<!-- ══════════════ TESTIMONIALS ══════════════ -->
+<section id="reviews" style="padding-block:100px;background:var(--bg-alt)">
+  <div class="container">
+    <div class="sr" style="margin-bottom:52px">
+      <div class="sec-eye">Client Reviews</div>
+      <h2 class="sec-h2">What clients <span class="grad-text">say about us.</span></h2>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px">
+
+      <div class="tcard sr sr-d1">
+        <div class="tcard-stars">★★★★★</div>
+        <p class="tcard-quote">"Vivek built our AI email triage system in under 3 weeks. What used to consume an entire support team now runs automatically — before our agents even log in. The ROI paid for itself in the first month."</p>
+        <div class="tcard-author">
+          <div class="tcard-avatar" style="background:linear-gradient(135deg,#0057FF,#003DB5)">iM</div>
+          <div>
+            <div class="tcard-name">InCred Money</div>
+            <div class="tcard-role">FinTech — AI Automation</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tcard sr sr-d2">
+        <div class="tcard-stars">★★★★★</div>
+        <p class="tcard-quote">"The n8n workflow Vivek built replaced a manual process that had 4 people working on it daily. It now runs on its own, error-free. He understood the business logic immediately — not just the technical side."</p>
+        <div class="tcard-author">
+          <div class="tcard-avatar" style="background:linear-gradient(135deg,#6929C4,#491D8B)">SA</div>
+          <div>
+            <div class="tcard-name">Scale AI</div>
+            <div class="tcard-role">AI / Data — Workflow Automation</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tcard sr sr-d3">
+        <div class="tcard-stars">★★★★★</div>
+        <p class="tcard-quote">"I've worked with many automation engineers. Vivek is in a different league — enterprise thinking, clean architecture, actual documentation. First time I felt confident handing a process off to a system permanently."</p>
+        <div class="tcard-author">
+          <div class="tcard-avatar" style="background:linear-gradient(135deg,#E14D2A,#9C1B04)">LB</div>
+          <div>
+            <div class="tcard-name">Labelbox</div>
+            <div class="tcard-role">AI Data Platform — DevOps</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<style>
+.tcard {
+  background:var(--white); border:1px solid var(--border);
+  border-radius:var(--r-xl); padding:32px 28px;
+  box-shadow:var(--shadow-sm);
+  display:flex; flex-direction:column; gap:18px;
+  transition:transform .25s cubic-bezier(.22,1,.36,1), box-shadow .25s;
+}
+.tcard:hover { transform:translateY(-4px); box-shadow:var(--shadow-lg) }
+.tcard-stars { color:#F59E0B; font-size:15px; letter-spacing:2px }
+.tcard-quote {
+  font-size:0.9375rem; color:var(--t2); line-height:1.82;
+  font-style:italic; flex:1;
+}
+.tcard-author { display:flex; align-items:center; gap:12px; padding-top:4px; border-top:1px solid var(--border) }
+.tcard-avatar {
+  width:40px; height:40px; border-radius:9px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-weight:800; font-size:13px; color:#fff;
+}
+.tcard-name { font-size:0.9rem; font-weight:700; color:var(--t1) }
+.tcard-role { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.08em; color:var(--t3); margin-top:2px }
+</style>
+
 <!-- ══════════════ ABOUT ══════════════ -->
 <section id="about">
   <div class="container">
@@ -999,8 +1112,7 @@ footer {
           n8n Verified Creator
         </div>
         <div class="about-photo">
-          <!-- Drop vivek.jpg into the assets/ folder — this loads automatically -->
-          <img src="assets/vivek.jpg" alt="Vivek Malakar — Founder, Flowvanta"
+          <img src="assets/Vivek-Profile.png" alt="Vivek Malakar — Founder, Flowvanta"
                onerror="this.style.display='none'">
           <div class="photo-init">VM</div>
         </div>
