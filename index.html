@@ -7,6 +7,8 @@
 <meta name="description" content="Custom n8n workflows, AI systems, and DevOps pipelines. Built by engineers with 12+ years of enterprise experience. Book a free blueprint call.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- Google Identity Services — needed for Sign in with Google -->
+<script src="https://accounts.google.com/gsi/client" async></script>
 <style>
 
 /* ═══════════════════════════════════════
@@ -701,6 +703,201 @@ footer {
 .footer-made a { color:rgba(255,255,255,0.5); transition:color .2s }
 .footer-made a:hover { color:#fff }
 
+/* ── WORKFLOW RESULT PANEL ─────────────────────────── */
+.wf-result {
+  margin-top:14px; border-radius:var(--r-lg);
+  border:1.5px solid var(--border2); overflow:hidden;
+  box-shadow:var(--shadow-lg);
+  display:none; animation:slideDown .4s cubic-bezier(.22,1,.36,1);
+}
+.wf-result.show { display:block }
+@keyframes slideDown { from{opacity:0;transform:translateY(-12px)} to{opacity:1;transform:translateY(0)} }
+
+/* Sign-in prompt inside result */
+.wfr-signin {
+  background:var(--white); padding:28px 24px;
+  display:flex; flex-direction:column; align-items:center; gap:16px; text-align:center;
+}
+.wfr-signin-heading {
+  font-size:1rem; font-weight:700; color:var(--t1);
+}
+.wfr-signin-sub { font-size:0.875rem; color:var(--t2); max-width:340px; line-height:1.6 }
+.wfr-google-btn {
+  display:inline-flex; align-items:center; gap:12px;
+  padding:12px 24px; border-radius:var(--r-sm);
+  background:var(--white); border:1.5px solid var(--border);
+  font-size:0.9375rem; font-weight:600; color:var(--t1);
+  cursor:pointer; box-shadow:var(--shadow-md);
+  transition:box-shadow .2s, transform .15s;
+}
+.wfr-google-btn:hover { box-shadow:var(--shadow-lg); transform:translateY(-1px) }
+.wfr-google-btn svg { width:20px; height:20px; flex-shrink:0 }
+
+/* Loading state */
+.wfr-loading {
+  background:var(--bg-alt); padding:36px 24px;
+  display:flex; flex-direction:column; align-items:center; gap:18px; text-align:center;
+}
+.wfr-spinner {
+  width:44px; height:44px; border-radius:50%;
+  border:3px solid var(--border2); border-top-color:var(--purple);
+  animation:spin 0.8s linear infinite;
+}
+@keyframes spin { to{ transform:rotate(360deg) } }
+.wfr-loading-label {
+  font-size:0.9375rem; font-weight:600; color:var(--t1);
+}
+.wfr-loading-sub { font-size:0.8125rem; color:var(--t3); font-family:'JetBrains Mono',monospace }
+
+/* User chip */
+.user-chip {
+  display:inline-flex; align-items:center; gap:10px;
+  padding:7px 14px 7px 7px; border-radius:100px;
+  background:var(--white); border:1px solid var(--border);
+  box-shadow:var(--shadow-sm);
+}
+.user-chip-avatar {
+  width:30px; height:30px; border-radius:50%; object-fit:cover;
+}
+.user-chip-avatar-init {
+  width:30px; height:30px; border-radius:50%;
+  background:var(--grad); color:#fff;
+  display:flex; align-items:center; justify-content:center;
+  font-size:12px; font-weight:700; flex-shrink:0;
+}
+.user-chip-name { font-size:0.8125rem; font-weight:600; color:var(--t1) }
+.user-chip-email { font-size:0.6875rem; color:var(--t3); font-family:'JetBrains Mono',monospace }
+
+/* Result output */
+.wfr-output {
+  background:var(--white);
+}
+.wfr-top-bar {
+  display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;
+  padding:16px 20px; border-bottom:1px solid var(--border); background:var(--bg-alt);
+}
+.wfr-top-title {
+  font-family:'JetBrains Mono',monospace; font-size:10.5px;
+  letter-spacing:0.14em; text-transform:uppercase; color:var(--purple); font-weight:500;
+}
+.wfr-canvas-wrap {
+  padding:24px 20px; overflow-x:auto; border-bottom:1px solid var(--border);
+}
+.wfr-canvas {
+  display:flex; align-items:center; gap:6px; min-width:max-content;
+}
+.wfr-node {
+  display:flex; flex-direction:column; align-items:center; gap:6px; flex-shrink:0;
+  animation:nodeIn .4s cubic-bezier(.34,1.56,.64,1) both;
+}
+.wfr-node-box {
+  width:80px; height:64px; border-radius:12px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:4px; border:1.5px solid transparent; position:relative; overflow:hidden;
+  transition:transform .2s, box-shadow .2s; cursor:default;
+}
+.wfr-node-box:hover { transform:translateY(-3px); box-shadow:var(--shadow-md) }
+.wfr-node-box::before { content:''; position:absolute; top:0; inset-inline:0; height:2.5px }
+.wfr-node-icon { font-size:22px; line-height:1 }
+.wfr-node-label {
+  font-family:'JetBrains Mono',monospace; font-size:8.5px;
+  color:var(--t3); text-align:center; max-width:78px; line-height:1.3; letter-spacing:0.03em;
+}
+/* Node types */
+.wfn-trigger { background:#FFF7ED; border-color:#FED7AA }
+.wfn-trigger::before { background:linear-gradient(90deg,#F97316,transparent) }
+.wfn-action  { background:#EFF6FF; border-color:#BFDBFE }
+.wfn-action::before  { background:linear-gradient(90deg,#2563EB,transparent) }
+.wfn-ai      { background:#F5F3FF; border-color:#DDD6FE }
+.wfn-ai::before      { background:linear-gradient(90deg,#7C3AED,transparent) }
+.wfn-output  { background:#F0FDF4; border-color:#A7F3D0 }
+.wfn-output::before  { background:linear-gradient(90deg,#059669,transparent) }
+/* Connector */
+.wfr-connector {
+  display:flex; flex-direction:column; align-items:center;
+  flex-shrink:0; position:relative;
+}
+.wfr-conn-line {
+  width:36px; height:2px;
+  background:linear-gradient(90deg, var(--border2), var(--purple-l));
+  position:relative;
+}
+.wfr-conn-dot {
+  position:absolute; width:8px; height:8px; border-radius:50%;
+  background:var(--purple); top:-3px; left:0;
+  animation:connDot 1.8s ease-in-out infinite;
+}
+@keyframes connDot {
+  0%   { left:0;   opacity:0 }
+  10%  { opacity:1 }
+  90%  { opacity:1 }
+  100% { left:28px; opacity:0 }
+}
+/* Steps list */
+.wfr-steps {
+  padding:16px 20px; border-bottom:1px solid var(--border);
+  display:flex; flex-direction:column; gap:8px;
+}
+.wfr-step {
+  display:flex; align-items:flex-start; gap:10px;
+  font-size:0.875rem; color:var(--t2); line-height:1.5;
+}
+.wfr-step-num {
+  width:20px; height:20px; border-radius:50%; flex-shrink:0;
+  background:var(--grad); color:#fff;
+  display:flex; align-items:center; justify-content:center;
+  font-size:10px; font-weight:700; margin-top:1px;
+}
+/* Actions bar */
+.wfr-actions {
+  display:flex; flex-wrap:wrap; gap:10px; padding:16px 20px;
+  align-items:center;
+}
+.wfr-download-btn {
+  padding:10px 18px; border-radius:var(--r-sm);
+  background:var(--bg-alt); border:1.5px solid var(--border);
+  font-size:0.8125rem; font-weight:600; color:var(--t2); cursor:pointer;
+  display:inline-flex; align-items:center; gap:7px;
+  transition:border-color .2s, color .2s;
+}
+.wfr-download-btn:hover { border-color:var(--purple-l); color:var(--purple) }
+.wfr-cta-btn {
+  padding:10px 20px; border-radius:var(--r-sm);
+  background:var(--grad); color:#fff;
+  font-size:0.875rem; font-weight:700;
+  border:none; cursor:pointer; text-decoration:none;
+  box-shadow:var(--shadow-purple);
+  transition:opacity .2s, transform .15s;
+  display:inline-flex; align-items:center; gap:7px;
+}
+.wfr-cta-btn:hover { opacity:.88; transform:translateY(-1px) }
+
+/* ── SOCIAL LINKS GRID (About) ─────────────────────── */
+.social-grid {
+  display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-top:28px;
+}
+@media (min-width:480px) { .social-grid { grid-template-columns:repeat(4,1fr) } }
+.social-card {
+  display:flex; flex-direction:column; align-items:center; gap:8px;
+  padding:16px 12px; border-radius:var(--r-md);
+  border:1.5px solid var(--border); background:var(--white);
+  text-decoration:none; color:var(--t1);
+  box-shadow:var(--shadow-sm);
+  transition:border-color .2s, transform .2s, box-shadow .2s;
+  text-align:center;
+}
+.social-card:hover { border-color:var(--border2); transform:translateY(-3px); box-shadow:var(--shadow-md) }
+.social-card-icon {
+  width:40px; height:40px; border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+  font-weight:800; font-size:14px; color:#fff; letter-spacing:-0.02em; flex-shrink:0;
+}
+.social-card-name { font-size:0.875rem; font-weight:700; color:var(--t1); line-height:1 }
+.social-card-handle { font-family:'JetBrains Mono',monospace; font-size:9.5px; color:var(--t3); letter-spacing:0.06em }
+
+/* Call-to-action row below social grid */
+.about-cta-row { display:flex; flex-wrap:wrap; gap:12px; margin-top:20px }
+
 </style>
 </head>
 <body>
@@ -759,32 +956,67 @@ footer {
         Custom n8n workflows, AI systems, and DevOps pipelines — built by engineers with 12+ years of enterprise delivery. Describe your problem. We ship the solution.
       </p>
 
-      <!-- CTAs -->
-      <div class="hero-cta-row" style="animation:fadeUp .6s ease both .32s">
-        <a href="#contact" class="btn-primary">Book Free Blueprint Call →</a>
-        <a href="#services" class="btn-outline">See How It Works</a>
-      </div>
-
-      <!-- Interactive prompt -->
-      <div class="prompt-wrap" style="animation:fadeUp .6s ease both .38s">
+      <!-- Prompt + Generate Workflow -->
+      <div class="prompt-wrap" style="animation:fadeUp .6s ease both .32s;max-width:760px">
         <form class="prompt-card" id="promptForm" autocomplete="off">
           <div class="prompt-topbar">
             <div class="ptb-dot"></div><div class="ptb-dot"></div><div class="ptb-dot"></div>
-            <span class="ptb-label">Describe what you want to automate</span>
+            <span class="ptb-label">Describe your workflow</span>
           </div>
-          <textarea class="prompt-ta" id="promptInput" rows="3"
-            placeholder="e.g. Route every support email to the right team, draft a reply, and log it to our CRM — automatically."
-            aria-label="Describe your automation"></textarea>
+          <textarea class="prompt-ta" id="promptInput" rows="4"
+            placeholder="Send me a daily Google Sheets report every morning at 9 AM…"
+            aria-label="Describe your workflow"
+            style="font-size:1.0625rem;min-height:100px"></textarea>
           <div class="prompt-footer">
-            <span class="prompt-hint">Type your process — watch it become a workflow</span>
-            <button type="submit" class="prompt-btn">Get Free Blueprint →</button>
+            <span class="prompt-hint" id="promptHint">Sign in with Google to generate your free workflow</span>
+            <button type="submit" class="prompt-btn" id="generateBtn" style="padding:11px 24px;font-size:0.9375rem">
+              ⚡ Generate Workflow
+            </button>
           </div>
         </form>
 
-        <!-- Live workflow preview -->
-        <div class="wf-preview" id="wfPreview">
-          <div class="wf-row" id="wfRow"><!-- populated by JS --></div>
-        </div>
+        <!-- Result panel (sign-in → loading → output) -->
+        <div class="wf-result" id="wfResult">
+
+          <!-- Step A: Sign-in prompt -->
+          <div class="wfr-signin" id="wfrSignin" style="display:none">
+            <div style="font-size:2rem">⚡</div>
+            <div class="wfr-signin-heading">One step — sign in to generate your workflow</div>
+            <div class="wfr-signin-sub">We use Google to identify you. No passwords, no forms — just your workflow.</div>
+            <button class="wfr-google-btn" id="googleSignInBtn" onclick="triggerGoogleSignIn()">
+              <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+              Continue with Google
+            </button>
+          </div>
+
+          <!-- Step B: Loading -->
+          <div class="wfr-loading" id="wfrLoading" style="display:none">
+            <div class="wfr-spinner"></div>
+            <div class="wfr-loading-label">Building your n8n workflow…</div>
+            <div class="wfr-loading-sub" id="wfrLoadingSub">Analysing your process</div>
+          </div>
+
+          <!-- Step C: Result -->
+          <div class="wfr-output" id="wfrOutput" style="display:none">
+            <div class="wfr-top-bar">
+              <div>
+                <div class="wfr-top-title">✨ Your Automation Blueprint</div>
+                <div style="font-size:0.75rem;color:var(--t3);margin-top:3px" id="wfrPromptEcho"></div>
+              </div>
+              <div id="wfrUserChip"></div>
+            </div>
+            <div class="wfr-canvas-wrap">
+              <div class="wfr-canvas" id="wfrCanvas"></div>
+            </div>
+            <div class="wfr-steps" id="wfrSteps"></div>
+            <div class="wfr-actions">
+              <button class="wfr-download-btn" id="wfrDownload">⬇ Download n8n JSON</button>
+              <a href="#contact" class="wfr-cta-btn">Book a Call to Deploy This →</a>
+              <span style="font-size:0.75rem;color:var(--t3);margin-left:4px">Free 30-min call</span>
+            </div>
+          </div>
+
+        </div><!-- /wf-result -->
       </div>
 
       <!-- Stats bar -->
@@ -1113,8 +1345,10 @@ footer {
         </div>
         <div class="about-photo">
           <img src="assets/Vivek-Profile.png" alt="Vivek Malakar — Founder, Flowvanta"
+               style="position:relative;z-index:1"
+               onload="document.getElementById('photoInit').style.display='none'"
                onerror="this.style.display='none'">
-          <div class="photo-init">VM</div>
+          <div class="photo-init" id="photoInit">VM</div>
         </div>
         <div class="about-card-float">
           <span class="acf-n" data-count="50">50</span><span class="acf-n" style="background:none;-webkit-text-fill-color:var(--t3)">+</span>
@@ -1153,11 +1387,35 @@ footer {
           </div>
         </div>
 
-        <div class="about-btns">
+        <!-- Social links grid -->
+        <div class="social-grid">
+          <a href="https://www.linkedin.com/in/vivek120891/" target="_blank" rel="noopener" class="social-card">
+            <div class="social-card-icon" style="background:#0A66C2">in</div>
+            <div class="social-card-name">LinkedIn</div>
+            <div class="social-card-handle">vivek120891</div>
+          </a>
+          <a href="https://www.upwork.com/freelancers/~014200b37321558512" target="_blank" rel="noopener" class="social-card">
+            <div class="social-card-icon" style="background:#6fda44;color:#1a1a1a">Up</div>
+            <div class="social-card-name">Upwork</div>
+            <div class="social-card-handle">Top Rated</div>
+          </a>
+          <a href="https://github.com/vivek120891" target="_blank" rel="noopener" class="social-card">
+            <div class="social-card-icon" style="background:#24292E">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+            </div>
+            <div class="social-card-name">GitHub</div>
+            <div class="social-card-handle">vivek120891</div>
+          </a>
+          <a href="https://n8n.io/creators/vivek/" target="_blank" rel="noopener" class="social-card">
+            <div class="social-card-icon" style="background:#FF6D5A">n8</div>
+            <div class="social-card-name">n8n Creator</div>
+            <div class="social-card-handle">Verified</div>
+          </a>
+        </div>
+
+        <div class="about-cta-row">
           <a href="#contact" class="btn-primary" style="font-size:.875rem;padding:11px 22px">Book a Free Call →</a>
-          <a href="https://www.upwork.com/freelancers/~014200b37321558512" target="_blank" rel="noopener" class="btn-sm-outline">Upwork ↗</a>
-          <a href="https://www.linkedin.com/in/vivek120891/" target="_blank" rel="noopener" class="btn-sm-outline">LinkedIn ↗</a>
-          <a href="https://email-automation-vivek.netlify.app/" target="_blank" rel="noopener" class="btn-sm-outline">Case Study ↗</a>
+          <a href="https://email-automation-vivek.netlify.app/" target="_blank" rel="noopener" class="btn-outline" style="font-size:.875rem;padding:11px 22px">View Case Study ↗</a>
         </div>
       </div>
 
@@ -1326,6 +1584,24 @@ footer {
 
 <!-- ══════════════ SCRIPTS ══════════════ -->
 <script>
+/* ═══════════════════════════════════════════════════════════
+   FLOWVANTA — MAIN SCRIPTS
+   ═══════════════════════════════════════════════════════════
+
+   GOOGLE SIGN-IN SETUP (required for Generate Workflow):
+   ──────────────────────────────────────────────────────
+   1. Go to https://console.cloud.google.com
+   2. New project → APIs & Services → Credentials
+   3. Create credentials → OAuth 2.0 Client ID → Web application
+   4. Authorized JavaScript origins:
+        https://flowvanta.dev
+        http://localhost (for local testing)
+   5. Copy your Client ID and paste it below replacing the placeholder.
+   ═══════════════════════════════════════════════════════════ */
+
+const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
+// ↑ Replace with your real Client ID from Google Cloud Console
+
 /* ── NAV scroll shadow + mobile toggle */
 (function () {
   const nav = document.getElementById('nav');
@@ -1392,93 +1668,358 @@ document.head.appendChild(style);
   });
 })();
 
-/* ── Interactive workflow prompt */
+/* ═══════════════════════════════════════════════════════════
+   GENERATE WORKFLOW — Google Sign-In + Workflow Builder
+   ═══════════════════════════════════════════════════════════ */
 (function () {
-  const input   = document.getElementById('promptInput');
-  const preview = document.getElementById('wfPreview');
-  const row     = document.getElementById('wfRow');
-  const form    = document.getElementById('promptForm');
 
-  const templates = {
-    email:   [{i:'📧',l:'Email Trigger',t:'wnt'},{i:'🔍',l:'AI Classify',t:'wnai'},{i:'✍️',l:'Draft Reply',t:'wnai'},{i:'👤',l:'Review',t:'wna'},{i:'✅',l:'Send Reply',t:'wno'}],
-    crm:     [{i:'📋',l:'Form Submit',t:'wnt'},{i:'🔍',l:'Enrich Lead',t:'wna'},{i:'💼',l:'Update CRM',t:'wna'},{i:'💬',l:'Slack Notify',t:'wno'}],
-    invoice: [{i:'📄',l:'Email Attach',t:'wnt'},{i:'🤖',l:'OCR Extract',t:'wnai'},{i:'✅',l:'Validate',t:'wna'},{i:'📊',l:'Update Books',t:'wna'},{i:'🔔',l:'Notify Finance',t:'wno'}],
-    report:  [{i:'⏰',l:'Schedule',t:'wnt'},{i:'📊',l:'Pull Data',t:'wna'},{i:'🧠',l:'AI Summarise',t:'wnai'},{i:'📧',l:'Send Report',t:'wno'}],
-    slack:   [{i:'⚡',l:'Event Trigger',t:'wnt'},{i:'🤖',l:'AI Process',t:'wnai'},{i:'🔀',l:'Route Logic',t:'wna'},{i:'💬',l:'Post to Slack',t:'wno'}],
-    default: [{i:'⚡',l:'Trigger',t:'wnt'},{i:'⚙️',l:'Process',t:'wna'},{i:'🤖',l:'AI Step',t:'wnai'},{i:'🔀',l:'Route',t:'wna'},{i:'✅',l:'Output',t:'wno'}],
+  // ── Workflow templates keyed by category
+  const WORKFLOWS = {
+    report: {
+      nodes: [
+        { icon:'⏰', label:'Schedule\nTrigger',    type:'wfn-trigger', desc:'Runs daily at 9 AM'           },
+        { icon:'📊', label:'Google\nSheets',       type:'wfn-action',  desc:'Reads rows from your sheet'   },
+        { icon:'🤖', label:'AI Format\nReport',    type:'wfn-ai',      desc:'GPT-4o summarises the data'   },
+        { icon:'📧', label:'Gmail\nSend',           type:'wfn-output',  desc:'Sends report to your inbox'   },
+      ],
+      steps: [
+        'Schedule Trigger fires every morning at 9 AM',
+        'Google Sheets node reads the latest rows from your spreadsheet',
+        'AI (GPT-4o) formats the raw data into a clean, readable report',
+        'Gmail sends the formatted report directly to your inbox',
+      ],
+      name: 'Daily Google Sheets Report',
+    },
+    email: {
+      nodes: [
+        { icon:'📧', label:'Gmail\nTrigger',       type:'wfn-trigger', desc:'New email received'            },
+        { icon:'🔍', label:'AI Classify\n& Triage', type:'wfn-ai',     desc:'Detects intent & priority'    },
+        { icon:'✍️', label:'Draft\nReply',          type:'wfn-ai',      desc:'GPT-4o writes the response'   },
+        { icon:'👤', label:'Human\nReview',         type:'wfn-action',  desc:'Agent approves or edits'      },
+        { icon:'✅', label:'Send\nReply',            type:'wfn-output',  desc:'Auto-sends from your inbox'   },
+      ],
+      steps: [
+        'Gmail Trigger fires when a new email arrives in your inbox',
+        'AI classifies the intent, urgency, and category automatically',
+        'GPT-4o drafts a personalised reply based on email context + your KB',
+        'Human reviewer approves or edits the draft in 30 seconds',
+        'Approved reply is sent automatically — full audit log saved',
+      ],
+      name: 'AI Email Support Triage',
+    },
+    crm: {
+      nodes: [
+        { icon:'📋', label:'Form\nWebhook',        type:'wfn-trigger', desc:'New lead submission'           },
+        { icon:'🔍', label:'Enrich\nLead',         type:'wfn-action',  desc:'Adds company & social data'   },
+        { icon:'💼', label:'HubSpot\nUpdate',      type:'wfn-action',  desc:'Creates/updates CRM contact'  },
+        { icon:'💬', label:'Slack\nNotify',        type:'wfn-output',  desc:'Pings your sales channel'     },
+      ],
+      steps: [
+        'Webhook fires the moment a lead submits your contact form',
+        'Enrichment node adds company info, LinkedIn, and firmographics',
+        'HubSpot CRM is updated with the full enriched profile automatically',
+        'Slack notification pings your sales team within seconds',
+      ],
+      name: 'Lead Capture → CRM + Slack',
+    },
+    invoice: {
+      nodes: [
+        { icon:'📄', label:'Email\nAttachment',    type:'wfn-trigger', desc:'PDF invoice arrives'           },
+        { icon:'🤖', label:'OCR\nExtract',         type:'wfn-ai',      desc:'Reads line items & totals'    },
+        { icon:'✅', label:'Validate\nData',       type:'wfn-action',  desc:'Checks against purchase orders'},
+        { icon:'📊', label:'QuickBooks\nUpdate',   type:'wfn-action',  desc:'Books the invoice'            },
+        { icon:'🔔', label:'Notify\nFinance',      type:'wfn-output',  desc:'Alerts team on Slack'         },
+      ],
+      steps: [
+        'Email trigger detects incoming invoice attachments (PDF/image)',
+        'OCR AI extracts vendor, amount, line items, and due date',
+        'Validation cross-references against open purchase orders',
+        'QuickBooks entry created automatically with correct coding',
+        'Finance team notified on Slack with invoice summary',
+      ],
+      name: 'Invoice Processing Automation',
+    },
+    slack: {
+      nodes: [
+        { icon:'⚡', label:'Event\nTrigger',       type:'wfn-trigger', desc:'App event or webhook'          },
+        { icon:'🤖', label:'AI\nProcess',          type:'wfn-ai',      desc:'GPT-4o interprets the data'   },
+        { icon:'🔀', label:'Route\nLogic',         type:'wfn-action',  desc:'Sends to correct channel'     },
+        { icon:'💬', label:'Slack\nPost',          type:'wfn-output',  desc:'Message delivered'            },
+      ],
+      steps: [
+        'Event trigger fires from your app, webhook, or schedule',
+        'AI processes and formats the data into a clear message',
+        'Router sends to the correct Slack channel based on type',
+        'Formatted message posted with context and action links',
+      ],
+      name: 'Smart Slack Notifications',
+    },
+    sheets: {
+      nodes: [
+        { icon:'⚡', label:'Trigger\nEvent',       type:'wfn-trigger', desc:'New row or form submit'        },
+        { icon:'📊', label:'Google\nSheets Read',  type:'wfn-action',  desc:'Pulls existing data'          },
+        { icon:'🔄', label:'Transform\n& Merge',   type:'wfn-action',  desc:'Cleans and maps fields'       },
+        { icon:'🗄️', label:'Database\nSync',       type:'wfn-action',  desc:'Writes to Airtable/Notion'   },
+        { icon:'✅', label:'Confirm\n& Log',        type:'wfn-output',  desc:'Updates status in sheet'      },
+      ],
+      steps: [
+        'Trigger fires when new data is added to your Google Sheet',
+        'Existing records pulled to check for duplicates or updates',
+        'Data transformed, cleaned, and mapped to destination schema',
+        'Target database (Airtable, Notion, SQL) updated automatically',
+        'Source sheet updated with sync status and timestamp',
+      ],
+      name: 'Google Sheets → Database Sync',
+    },
+    default: {
+      nodes: [
+        { icon:'⚡', label:'Trigger\nEvent',       type:'wfn-trigger', desc:'Your defined starting point'  },
+        { icon:'⚙️', label:'Process\nData',        type:'wfn-action',  desc:'Transform & route logic'      },
+        { icon:'🤖', label:'AI\nEnrichment',       type:'wfn-ai',      desc:'GPT-4o adds intelligence'     },
+        { icon:'🔀', label:'Route &\nDecide',      type:'wfn-action',  desc:'Conditional branching'        },
+        { icon:'✅', label:'Output\n& Notify',     type:'wfn-output',  desc:'Deliver the result'           },
+      ],
+      steps: [
+        'Trigger fires based on your defined event (schedule, webhook, or app)',
+        'Data is processed, cleaned, and routed through your business logic',
+        'AI layer adds classification, generation, or enrichment where needed',
+        'Conditional routing sends data to the right destination',
+        'Output delivered — notification, database update, or API call',
+      ],
+      name: 'Custom Automation Workflow',
+    },
   };
 
-  function match(text) {
+  function matchWorkflow(text) {
     const t = text.toLowerCase();
-    if (/email|mail|inbox|gmail|support/.test(t)) return templates.email;
-    if (/crm|lead|form|hubspot|salesforce|airtable/.test(t)) return templates.crm;
-    if (/invoice|bill|payment|receipt|finance|accounting/.test(t)) return templates.invoice;
-    if (/report|dashboard|weekly|monthly|summary|analytics/.test(t)) return templates.report;
-    if (/slack|discord|telegram|notify|alert|message/.test(t)) return templates.slack;
-    return templates.default;
+    if (/report|daily|weekly|monthly|morning|summary|analytics|dashboard/.test(t)) return WORKFLOWS.report;
+    if (/email|mail|inbox|gmail|support|ticket|triage/.test(t)) return WORKFLOWS.email;
+    if (/crm|lead|form|hubspot|salesforce|airtable|contact/.test(t)) return WORKFLOWS.crm;
+    if (/invoice|bill|payment|receipt|finance|accounting|quickbooks/.test(t)) return WORKFLOWS.invoice;
+    if (/slack|discord|telegram|notify|alert|notification/.test(t)) return WORKFLOWS.slack;
+    if (/sheet|google sheet|spreadsheet|table|database|notion|sync/.test(t)) return WORKFLOWS.sheets;
+    return WORKFLOWS.default;
   }
 
-  function render(nodes) {
-    row.innerHTML = '';
-    nodes.forEach((n, i) => {
-      const wrap = document.createElement('div');
-      wrap.className = 'wf-node-wrap';
-      const box = document.createElement('div');
-      box.className = `wf-node-box ${n.t}`;
-      box.style.animationDelay = `${i * 0.07}s`;
-      box.textContent = n.i;
-      const dot = document.createElement('div');
-      dot.className = 'wf-flow-dot';
-      const lbl = document.createElement('div');
-      lbl.className = 'wf-node-label';
-      lbl.textContent = n.l;
-      wrap.appendChild(box); wrap.appendChild(lbl);
-      row.appendChild(wrap);
-      if (i < nodes.length - 1) {
-        const arr = document.createElement('div');
-        arr.className = 'wf-arrow';
-        arr.appendChild(dot);
-        row.appendChild(arr);
+  // ── Google Sign-In state
+  let currentUser = null;
+  let pendingPrompt = '';
+  let tokenClient = null;
+
+  // Initialise Google Identity Services when library loads
+  function initGoogle() {
+    if (typeof google === 'undefined' || !google.accounts) {
+      setTimeout(initGoogle, 300); return;
+    }
+    const isRealClientId = !GOOGLE_CLIENT_ID.startsWith('YOUR_');
+    if (!isRealClientId) return; // dev mode — skip init
+
+    tokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: GOOGLE_CLIENT_ID,
+      scope: 'openid email profile',
+      callback: async (resp) => {
+        if (resp.error) { console.warn('Google sign-in error:', resp.error); return; }
+        try {
+          const info = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+            headers: { Authorization: `Bearer ${resp.access_token}` }
+          }).then(r => r.json());
+          currentUser = info;
+          runGeneration(pendingPrompt);
+        } catch(e) {
+          console.error(e);
+        }
       }
     });
   }
+  initGoogle();
 
-  let timer;
-  input.addEventListener('input', () => {
-    clearTimeout(timer);
-    const v = input.value.trim();
-    if (v.length < 8) { preview.classList.remove('show'); return }
-    timer = setTimeout(() => { render(match(v)); preview.classList.add('show') }, 380);
-  });
+  // ── Expose triggerGoogleSignIn globally (called by HTML onclick)
+  window.triggerGoogleSignIn = function () {
+    const isRealClientId = !GOOGLE_CLIENT_ID.startsWith('YOUR_');
+    if (!isRealClientId) {
+      // Dev mode: simulate sign-in with a mock user
+      currentUser = { name:'Demo User', email:'demo@example.com', picture:null };
+      runGeneration(pendingPrompt);
+      return;
+    }
+    if (tokenClient) tokenClient.requestAccessToken({ prompt:'select_account' });
+  };
+
+  // ── Form submit → prompt → sign-in / generate
+  const form  = document.getElementById('promptForm');
+  const input = document.getElementById('promptInput');
+  const hint  = document.getElementById('promptHint');
 
   form.addEventListener('submit', e => {
     e.preventDefault();
-    const v = input.value.trim();
-    const desc = document.getElementById('fd');
-    if (desc && v) desc.value = v;
-    document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
-    setTimeout(() => { if (desc) desc.focus() }, 700);
-  });
-})();
+    const val = input.value.trim();
+    if (val.length < 8) {
+      input.style.outline = '2px solid #EF4444';
+      setTimeout(() => input.style.outline = '', 1500);
+      return;
+    }
+    pendingPrompt = val;
 
-/* ── Cycling placeholder */
-(function () {
-  const el = document.getElementById('promptInput');
-  if (!el) return;
-  const phrases = [
-    'Route support emails to the right team, draft a reply, and log it to our CRM automatically…',
-    'When a lead fills our website form, enrich them, add to HubSpot, and notify our sales team on Slack…',
-    'Generate a weekly performance report from our analytics and email it to leadership every Monday…',
-    'Process incoming invoices — extract line items, validate totals, and update QuickBooks automatically…',
-    'Monitor our app for errors and automatically create a Jira ticket when something breaks…',
+    if (currentUser) {
+      runGeneration(val);
+    } else {
+      showPanel('signin');
+    }
+  });
+
+  // ── Panel helpers
+  const result   = document.getElementById('wfResult');
+  const pSignin  = document.getElementById('wfrSignin');
+  const pLoading = document.getElementById('wfrLoading');
+  const pOutput  = document.getElementById('wfrOutput');
+  const loadSub  = document.getElementById('wfrLoadingSub');
+
+  function showPanel(which) {
+    result.classList.add('show');
+    pSignin.style.display  = which === 'signin'  ? 'flex' : 'none';
+    pLoading.style.display = which === 'loading' ? 'flex' : 'none';
+    pOutput.style.display  = which === 'output'  ? 'block': 'none';
+    result.scrollIntoView({ behavior:'smooth', block:'nearest' });
+  }
+
+  // ── Main generation flow
+  const loadingMessages = [
+    'Analysing your process…',
+    'Mapping automation nodes…',
+    'Connecting integrations…',
+    'Building your workflow…',
+    'Almost ready…',
   ];
-  let i = 0;
+
+  function runGeneration(prompt) {
+    showPanel('loading');
+    let msgIdx = 0;
+    const ticker = setInterval(() => {
+      loadSub.textContent = loadingMessages[Math.min(++msgIdx, loadingMessages.length - 1)];
+    }, 600);
+
+    setTimeout(() => {
+      clearInterval(ticker);
+      const wf = matchWorkflow(prompt);
+      renderOutput(wf, prompt, currentUser);
+      showPanel('output');
+    }, 3200);
+  }
+
+  // ── Render the workflow result
+  function renderOutput(wf, prompt, user) {
+    // User chip
+    const chipEl = document.getElementById('wfrUserChip');
+    chipEl.innerHTML = '';
+    const chip = document.createElement('div');
+    chip.className = 'user-chip';
+    if (user.picture) {
+      chip.innerHTML = `<img class="user-chip-avatar" src="${user.picture}" alt="${user.name}">
+        <div><div class="user-chip-name">${user.name}</div><div class="user-chip-email">${user.email}</div></div>`;
+    } else {
+      const init = (user.name || 'U').charAt(0).toUpperCase();
+      chip.innerHTML = `<div class="user-chip-avatar-init">${init}</div>
+        <div><div class="user-chip-name">${user.name}</div><div class="user-chip-email">${user.email}</div></div>`;
+    }
+    chipEl.appendChild(chip);
+
+    // Prompt echo
+    const echoEl = document.getElementById('wfrPromptEcho');
+    const truncated = prompt.length > 72 ? prompt.slice(0, 72) + '…' : prompt;
+    echoEl.textContent = `"${truncated}"`;
+
+    // Nodes
+    const canvas = document.getElementById('wfrCanvas');
+    canvas.innerHTML = '';
+    wf.nodes.forEach((n, i) => {
+      const nodeWrap = document.createElement('div');
+      nodeWrap.className = 'wfr-node';
+      nodeWrap.style.animationDelay = `${i * 0.12}s`;
+      nodeWrap.innerHTML = `
+        <div class="wfr-node-box ${n.type}" title="${n.desc}">
+          <div class="wfr-node-icon">${n.icon}</div>
+          <div class="wfr-node-label">${n.label}</div>
+        </div>`;
+      canvas.appendChild(nodeWrap);
+      if (i < wf.nodes.length - 1) {
+        const conn = document.createElement('div');
+        conn.className = 'wfr-connector';
+        conn.innerHTML = `<div class="wfr-conn-line"><div class="wfr-conn-dot" style="animation-delay:${i*0.3}s"></div></div>`;
+        canvas.appendChild(conn);
+      }
+    });
+
+    // Steps
+    const stepsEl = document.getElementById('wfrSteps');
+    stepsEl.innerHTML = '';
+    wf.steps.forEach((s, i) => {
+      const step = document.createElement('div');
+      step.className = 'wfr-step';
+      step.style.animationDelay = `${i * 0.08}s`;
+      step.innerHTML = `<div class="wfr-step-num">${i + 1}</div><div>${s}</div>`;
+      stepsEl.appendChild(step);
+    });
+
+    // Download button
+    document.getElementById('wfrDownload').onclick = () => downloadJSON(wf, prompt);
+  }
+
+  // ── Generate downloadable n8n workflow JSON
+  function downloadJSON(wf, prompt) {
+    const nodeTypes = {
+      'wfn-trigger': 'n8n-nodes-base.scheduleTrigger',
+      'wfn-action':  'n8n-nodes-base.code',
+      'wfn-ai':      '@n8n/n8n-nodes-langchain.openAi',
+      'wfn-output':  'n8n-nodes-base.gmail',
+    };
+    const nodes = wf.nodes.map((n, i) => ({
+      id: `node_${i}`,
+      name: n.label.replace('\n', ' '),
+      type: nodeTypes[n.type] || 'n8n-nodes-base.code',
+      position: [240 + i * 200, 300],
+      parameters: {},
+      typeVersion: 1,
+    }));
+    const connections = {};
+    wf.nodes.slice(0, -1).forEach((_, i) => {
+      connections[`node_${i}`] = { main: [[{ node: `node_${i+1}`, type: 'main', index: 0 }]] };
+    });
+    const workflow = {
+      name: `Flowvanta — ${wf.name}`,
+      meta: { generatedBy:'flowvanta.dev', prompt, createdAt: new Date().toISOString() },
+      nodes, connections, active: false, settings: {},
+    };
+    const blob = new Blob([JSON.stringify(workflow, null, 2)], { type:'application/json' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url;
+    a.download = `flowvanta-${wf.name.toLowerCase().replace(/\s+/g,'-')}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // ── Cycling placeholder
+  const phrases = [
+    'Send me a daily Google Sheets report every morning at 9 AM…',
+    'When someone fills my contact form, add them to HubSpot and ping me on Slack…',
+    'Triage inbound support emails, draft a reply, and log it to our CRM…',
+    'Generate a weekly performance report and email it to my team every Monday…',
+    'Sync new Stripe payments to my accounting spreadsheet automatically…',
+    'When a new lead signs up, enrich their profile and create a task in Notion…',
+    'Monitor our app errors and create a Jira ticket automatically when things break…',
+  ];
+  let pidx = 0;
   setInterval(() => {
-    if (document.activeElement === el) return;
-    i = (i + 1) % phrases.length;
-    el.setAttribute('placeholder', phrases[i]);
-  }, 4500);
-})();
+    if (document.activeElement === input) return;
+    input.setAttribute('placeholder', phrases[pidx = (pidx + 1) % phrases.length]);
+  }, 4000);
+
+  // Update hint text when user is already signed in
+  if (currentUser) {
+    if (hint) hint.textContent = `Signed in as ${currentUser.name} — ready to generate`;
+  }
+
+})(); // end Generate Workflow
 
 /* ── Contact form */
 (function () {
