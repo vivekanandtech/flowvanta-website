@@ -1,0 +1,7 @@
+name = "flowvanta-blueprint"
+main = "src/index.js"
+compatibility_date = "2025-01-01"
+
+# After deploying, add the secret:
+#   wrangler secret put OPENAI_API_KEY
+# Then paste your key when prompted — it's stored encrypted, never in code.

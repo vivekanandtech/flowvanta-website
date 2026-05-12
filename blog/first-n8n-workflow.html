@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Build Your First n8n Workflow in 30 Minutes: Step-by-Step Guide | Flowvanta</title>
+<meta name="description" content="From installing n8n locally with Docker to deploying a real working automation — the fastest path to your first production-grade n8n workflow, explained simply.">
+<link rel="canonical" href="https://flowvanta.dev/blog/first-n8n-workflow.html">
+<link rel="icon" type="image/png" href="../assets/Flowvanta Hologram.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+  :root{--purple:#6D28D9;--blue:#2563EB;--grad:linear-gradient(135deg,#6D28D9 0%,#2563EB 100%);--t1:#06020F;--t2:#4B5268;--t3:#94A3B8;--border:#E4E2F0;--bg-alt:#F5F3FF;--bg-dark:#0D0A1E;--white:#fff;--r-xl:20px;--r-md:14px}
+  body{font-family:'Plus Jakarta Sans',sans-serif;color:var(--t1);background:var(--white);-webkit-font-smoothing:antialiased;line-height:1.6}
+  a{color:inherit;text-decoration:none}
+  .container{max-width:760px;margin-inline:auto;padding-inline:clamp(20px,5vw,40px)}
+  .container-wide{max-width:1100px;margin-inline:auto;padding-inline:clamp(20px,5vw,60px)}
+  nav{background:rgba(255,255,255,0.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px 0;position:sticky;top:0;z-index:100}
+  .nav-inner{display:flex;align-items:center;justify-content:space-between}
+  .nav-logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.1rem;letter-spacing:-0.03em}
+  .nav-back{font-size:.875rem;font-weight:600;color:var(--t2);transition:color .2s}
+  .nav-back:hover{color:var(--purple)}
+  .article-hero{padding:64px 0 48px;border-bottom:1px solid var(--border)}
+  .article-tag{display:inline-flex;align-items:center;padding:4px 12px;border-radius:100px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;background:#ECFDF5;color:#065F46;border:1px solid #6EE7B7;margin-bottom:20px}
+  .article-title{font-size:clamp(1.9rem,4.5vw,3rem);font-weight:900;letter-spacing:-0.04em;line-height:1.1;color:var(--t1);margin-bottom:20px}
+  .article-meta{display:flex;flex-wrap:wrap;align-items:center;gap:16px;font-size:.8125rem;color:var(--t3);padding-bottom:28px;border-bottom:1px solid var(--border);margin-bottom:36px}
+  .meta-author{display:flex;align-items:center;gap:8px;font-weight:600;color:var(--t2)}
+  .article-body{padding-bottom:60px}
+  .article-body p{font-size:1.0625rem;color:var(--t2);line-height:1.85;margin-bottom:22px}
+  .article-body h2{font-size:1.5rem;font-weight:800;letter-spacing:-0.03em;color:var(--t1);margin:40px 0 16px}
+  .article-body h3{font-size:1.125rem;font-weight:700;color:var(--t1);margin:28px 0 12px}
+  .article-body ul,.article-body ol{padding-left:24px;margin-bottom:22px;display:flex;flex-direction:column;gap:10px}
+  .article-body li{font-size:1.0625rem;color:var(--t2);line-height:1.75}
+  .article-body strong{color:var(--t1);font-weight:700}
+  .article-body code{font-family:'JetBrains Mono',monospace;font-size:.875em;background:#F5F3FF;color:#5B21B6;padding:2px 7px;border-radius:5px;border:1px solid #DDD6FE}
+  pre{background:#0D0A1E;border-radius:var(--r-md);padding:20px 24px;margin:24px 0;overflow-x:auto}
+  pre code{background:none;border:none;color:#C4B5FD;font-size:.875rem;padding:0;line-height:1.7}
+  .step-card{display:flex;gap:20px;margin-bottom:28px;align-items:flex-start}
+  .step-num{width:36px;height:36px;border-radius:50%;background:var(--grad);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem;flex-shrink:0;margin-top:2px}
+  .step-content h3{margin-top:0;margin-bottom:8px}
+  .callout{background:var(--bg-alt);border:1.5px solid #DDD6FE;border-radius:var(--r-md);padding:24px 28px;margin:32px 0}
+  .callout-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);font-weight:600;margin-bottom:10px}
+  .callout p{margin-bottom:0;color:var(--t1)}
+  .coming-soon{background:linear-gradient(135deg,#F5F3FF,#EFF6FF);border:1.5px solid #DDD6FE;border-radius:var(--r-xl);padding:40px 36px;text-align:center;margin:48px 0}
+  .cs-icon{font-size:2.5rem;margin-bottom:16px}
+  .cs-title{font-size:1.25rem;font-weight:800;color:var(--t1);margin-bottom:8px}
+  .cs-sub{font-size:.9375rem;color:var(--t2);line-height:1.7;max-width:400px;margin:0 auto}
+  .nl-box{background:var(--bg-dark);border-radius:var(--r-xl);padding:clamp(32px,5vw,48px);margin:48px 0;text-align:center}
+  .nl-box h3{font-size:1.375rem;font-weight:800;color:#fff;letter-spacing:-0.03em;margin-bottom:8px}
+  .nl-box p{font-size:.9375rem;color:rgba(255,255,255,0.6);margin-bottom:24px}
+  .nl-form{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:480px;margin:0 auto}
+  .nl-input{flex:1;min-width:200px;padding:12px 16px;border-radius:10px;border:1.5px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.07);color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:.9375rem;outline:none}
+  .nl-input::placeholder{color:rgba(255,255,255,0.35)}
+  .nl-btn{padding:12px 24px;border-radius:10px;background:linear-gradient(135deg,#7C3AED,#2563EB);color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:.9375rem;font-weight:700;border:none;cursor:pointer}
+  .nl-note{font-size:.75rem;color:rgba(255,255,255,0.3);margin-top:10px}
+  .cta-strip{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;background:#F5F3FF;border:1px solid #DDD6FE;border-radius:var(--r-xl);padding:28px 32px;margin:40px 0}
+  .cta-strip-text h4{font-size:1.0625rem;font-weight:800;color:var(--t1);margin-bottom:4px}
+  .cta-strip-text p{font-size:.875rem;color:var(--t2)}
+  .btn-grad{padding:12px 24px;border-radius:10px;background:var(--grad);color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:.875rem;font-weight:700;border:none;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+  footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;color:var(--t3);font-size:.8125rem}
+  footer a{color:var(--purple)}
+</style>
+</head>
+<body>
+
+<nav><div class="container-wide nav-inner">
+  <a href="/" class="nav-logo">
+    <img src="../assets/Flowvanta Hologram.png" alt="Flowvanta" style="width:32px;height:32px;object-fit:contain">
+    Flowvanta
+  </a>
+  <a href="/blog/" class="nav-back">← All articles</a>
+</div></nav>
+
+<div class="container">
+  <article>
+
+    <header class="article-hero">
+      <span class="article-tag">Tutorial</span>
+      <h1 class="article-title">Build Your First n8n Workflow in 30 Minutes: A Step-by-Step Guide</h1>
+      <div class="article-meta">
+        <div class="meta-author">
+          <img src="../assets/Flowvanta Hologram.png" alt="Flowvanta" style="width:28px;height:28px;border-radius:50%;object-fit:contain">
+          Flowvanta Engineering
+        </div>
+        <span>May 2026</span>
+        <span>10 min read</span>
+      </div>
+    </header>
+
+    <div class="article-body">
+
+      <p>n8n has a reputation for being powerful but complicated. It's not — you just need to know the right starting point. This guide takes you from zero to a real, working automation in 30 minutes, using Docker locally so you're not paying for cloud hosting while you learn.</p>
+
+      <p>By the end you'll have n8n running, a working 4-node workflow that catches a webhook, transforms data, and sends a Slack notification — and the mental model to build anything from there.</p>
+
+      <div class="callout">
+        <div class="callout-label">What you'll need</div>
+        <p>Docker Desktop installed (free) · A Slack workspace · 30 minutes · No coding experience required</p>
+      </div>
+
+      <h2>Step 1 — Install n8n with Docker</h2>
+
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h3>Run this single command in your terminal</h3>
+          <p>Open Terminal and paste this. n8n will download and start automatically:</p>
+        </div>
+      </div>
+
+<pre><code>docker run -it --rm \
+  --name n8n \
+  -p 5678:5678 \
+  -v ~/.n8n:/home/node/.n8n \
+  n8nio/n8n</code></pre>
+
+      <p>Then open <code>http://localhost:5678</code> in your browser. You'll see the n8n editor. That's it — n8n is running.</p>
+
+      <h2>Step 2 — Create your first workflow</h2>
+
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h3>Add a Webhook trigger node</h3>
+          <p>Click <strong>+ Add first step</strong> → search "Webhook" → select it. Set Method to <code>POST</code>. Copy the test URL shown — you'll use it in a moment.</p>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h3>Add a Code node to transform the data</h3>
+          <p>Click the <strong>+</strong> after the webhook → search "Code" → add it. This is where you shape the data however you need before sending it anywhere.</p>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h3>Add a Slack node to send the notification</h3>
+          <p>Add a Slack node → connect your Slack workspace via OAuth → pick your channel → set the message text using data from the previous nodes.</p>
+        </div>
+      </div>
+
+      <h2>What the full tutorial covers</h2>
+      <ul>
+        <li>Complete walkthrough with screenshots of every node configuration</li>
+        <li>How to connect Google Sheets, Gmail, and Slack credentials in n8n</li>
+        <li>The Code node basics — transforming data with JavaScript in 5 minutes</li>
+        <li>Running your workflow on a schedule instead of a webhook trigger</li>
+        <li>Error handling — what happens when a node fails and how to catch it</li>
+        <li>Moving from local Docker to a production n8n instance</li>
+      </ul>
+
+      <div class="coming-soon">
+        <div class="cs-icon">🛠️</div>
+        <div class="cs-title">Full step-by-step tutorial coming soon</div>
+        <div class="cs-sub">Complete with screenshots, node configs, and downloadable workflow JSON. Subscribe to get it when it drops.</div>
+      </div>
+
+    </div>
+
+    <div class="nl-box">
+      <h3>Get the full tutorial with screenshots</h3>
+      <p>Plus weekly n8n workflows and automation ideas straight to your inbox.</p>
+      <form class="nl-form" onsubmit="handleNl(event)">
+        <input type="email" class="nl-input" placeholder="you@company.com" required id="nlEmail3">
+        <button type="submit" class="nl-btn">Notify me →</button>
+      </form>
+      <p class="nl-note" id="nlMsg3">No spam. Unsubscribe any time.</p>
+    </div>
+
+    <div class="cta-strip">
+      <div class="cta-strip-text">
+        <h4>Rather have us build it for you?</h4>
+        <p>We scope, build, and hand over production-ready n8n workflows.</p>
+      </div>
+      <a href="/#contact" class="btn-grad">Book a free call →</a>
+    </div>
+
+  </article>
+</div>
+
+<footer><div class="container">© 2026 <a href="/">Flowvanta.dev</a> — All rights reserved</div></footer>
+
+<script>
+function handleNl(e) {
+  e.preventDefault();
+  const email = document.getElementById('nlEmail3').value;
+  fetch('https://formsubmit.co/ajax/vivek@flowvanta.dev', {
+    method:'POST', headers:{'Content-Type':'application/json',Accept:'application/json'},
+    body: JSON.stringify({_subject:'Article subscriber — First n8n Workflow', email, source:'blog/first-n8n-workflow', _template:'table'})
+  }).catch(()=>{});
+  document.getElementById('nlMsg3').textContent = "✅ You're in! We'll email you when it's live.";
+  document.getElementById('nlMsg3').style.color = '#6EE7B7';
+  e.target.querySelector('input').value = '';
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How We Cut Support Costs by 98% Using AI Email Triage in n8n | Flowvanta</title>
+<meta name="description" content="A real-world breakdown of the AI email triage system we built for a FinTech client — how it works, the n8n nodes involved, and exact ROI numbers after 30 days live.">
+<link rel="canonical" href="https://flowvanta.dev/blog/ai-email-triage-n8n.html">
+<link rel="icon" type="image/png" href="../assets/Flowvanta Hologram.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+  :root{--purple:#6D28D9;--purple-l:#8B5CF6;--blue:#2563EB;--grad:linear-gradient(135deg,#6D28D9 0%,#2563EB 100%);--t1:#06020F;--t2:#4B5268;--t3:#94A3B8;--border:#E4E2F0;--bg-alt:#F5F3FF;--bg-dark:#0D0A1E;--white:#fff;--r-xl:20px;--r-md:14px;--shadow-md:0 4px 16px rgba(13,10,30,0.08);--shadow-lg:0 12px 40px rgba(13,10,30,0.10)}
+  body{font-family:'Plus Jakarta Sans',sans-serif;color:var(--t1);background:var(--white);-webkit-font-smoothing:antialiased;line-height:1.6}
+  a{color:inherit;text-decoration:none}
+  .container{max-width:760px;margin-inline:auto;padding-inline:clamp(20px,5vw,40px)}
+  .container-wide{max-width:1100px;margin-inline:auto;padding-inline:clamp(20px,5vw,60px)}
+
+  /* Nav */
+  nav{background:rgba(255,255,255,0.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px 0;position:sticky;top:0;z-index:100}
+  .nav-inner{display:flex;align-items:center;justify-content:space-between}
+  .nav-logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.1rem;letter-spacing:-0.03em}
+  .nav-back{font-size:.875rem;font-weight:600;color:var(--t2);display:flex;align-items:center;gap:6px;transition:color .2s}
+  .nav-back:hover{color:var(--purple)}
+
+  /* Hero */
+  .article-hero{padding:64px 0 48px;border-bottom:1px solid var(--border)}
+  .article-tag{display:inline-flex;align-items:center;padding:4px 12px;border-radius:100px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;background:#F5F3FF;color:#5B21B6;border:1px solid #DDD6FE;margin-bottom:20px}
+  .article-title{font-size:clamp(1.9rem,4.5vw,3rem);font-weight:900;letter-spacing:-0.04em;line-height:1.1;color:var(--t1);margin-bottom:20px}
+  .article-meta{display:flex;flex-wrap:wrap;align-items:center;gap:16px;font-size:0.8125rem;color:var(--t3);padding-bottom:28px;border-bottom:1px solid var(--border);margin-bottom:36px}
+  .meta-author{display:flex;align-items:center;gap:8px;font-weight:600;color:var(--t2)}
+  .author-avatar{width:28px;height:28px;border-radius:50%;object-fit:contain}
+
+  /* Article body */
+  .article-body{padding-bottom:60px}
+  .article-body p{font-size:1.0625rem;color:var(--t2);line-height:1.85;margin-bottom:22px}
+  .article-body h2{font-size:1.5rem;font-weight:800;letter-spacing:-0.03em;color:var(--t1);margin:40px 0 16px}
+  .article-body h3{font-size:1.125rem;font-weight:700;color:var(--t1);margin:28px 0 12px}
+  .article-body ul,
+  .article-body ol{padding-left:24px;margin-bottom:22px;display:flex;flex-direction:column;gap:10px}
+  .article-body li{font-size:1.0625rem;color:var(--t2);line-height:1.75}
+  .article-body strong{color:var(--t1);font-weight:700}
+  .article-body code{font-family:'JetBrains Mono',monospace;font-size:0.875em;background:#F5F3FF;color:#5B21B6;padding:2px 7px;border-radius:5px;border:1px solid #DDD6FE}
+
+  /* Callout box */
+  .callout{background:var(--bg-alt);border:1.5px solid #DDD6FE;border-radius:var(--r-md);padding:24px 28px;margin:32px 0}
+  .callout-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--purple);font-weight:600;margin-bottom:10px}
+  .callout p{margin-bottom:0;color:var(--t1)}
+
+  /* Stat row */
+  .stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border-radius:var(--r-md);overflow:hidden;margin:32px 0}
+  .stat-cell{background:var(--white);padding:24px 20px;text-align:center}
+  .stat-n{font-size:2rem;font-weight:900;letter-spacing:-0.04em;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
+  .stat-l{font-size:0.75rem;color:var(--t3);margin-top:4px;font-weight:500}
+
+  /* Coming soon banner */
+  .coming-soon{background:linear-gradient(135deg,#F5F3FF,#EFF6FF);border:1.5px solid #DDD6FE;border-radius:var(--r-xl);padding:40px 36px;text-align:center;margin:48px 0}
+  .cs-icon{font-size:2.5rem;margin-bottom:16px}
+  .cs-title{font-size:1.25rem;font-weight:800;color:var(--t1);margin-bottom:8px;letter-spacing:-0.02em}
+  .cs-sub{font-size:0.9375rem;color:var(--t2);line-height:1.7;max-width:400px;margin:0 auto 24px}
+
+  /* Newsletter */
+  .nl-box{background:var(--bg-dark);border-radius:var(--r-xl);padding:clamp(32px,5vw,48px);margin:48px 0;text-align:center}
+  .nl-box h3{font-size:1.375rem;font-weight:800;color:#fff;letter-spacing:-0.03em;margin-bottom:8px}
+  .nl-box p{font-size:0.9375rem;color:rgba(255,255,255,0.6);margin-bottom:24px}
+  .nl-form{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:480px;margin:0 auto}
+  .nl-input{flex:1;min-width:200px;padding:12px 16px;border-radius:10px;border:1.5px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.07);color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:.9375rem;outline:none}
+  .nl-input::placeholder{color:rgba(255,255,255,0.35)}
+  .nl-input:focus{border-color:rgba(196,181,253,0.6)}
+  .nl-btn{padding:12px 24px;border-radius:10px;background:linear-gradient(135deg,#7C3AED,#2563EB);color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:.9375rem;font-weight:700;border:none;cursor:pointer;white-space:nowrap}
+  .nl-note{font-size:.75rem;color:rgba(255,255,255,0.3);margin-top:10px}
+
+  /* CTA strip */
+  .cta-strip{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;background:#F5F3FF;border:1px solid #DDD6FE;border-radius:var(--r-xl);padding:28px 32px;margin:40px 0}
+  .cta-strip-text h4{font-size:1.0625rem;font-weight:800;color:var(--t1);margin-bottom:4px}
+  .cta-strip-text p{font-size:.875rem;color:var(--t2)}
+  .btn-grad{padding:12px 24px;border-radius:10px;background:var(--grad);color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:.875rem;font-weight:700;border:none;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+
+  footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;color:var(--t3);font-size:.8125rem}
+  footer a{color:var(--purple)}
+</style>
+</head>
+<body>
+
+<nav><div class="container-wide nav-inner">
+  <a href="/" class="nav-logo">
+    <img src="../assets/Flowvanta Hologram.png" alt="Flowvanta" style="width:32px;height:32px;object-fit:contain">
+    Flowvanta
+  </a>
+  <a href="/blog/" class="nav-back">← All articles</a>
+</div></nav>
+
+<div class="container">
+  <article>
+
+    <header class="article-hero">
+      <span class="article-tag">AI Automation</span>
+      <h1 class="article-title">How We Cut Support Costs by 98% Using AI Email Triage in n8n</h1>
+      <div class="article-meta">
+        <div class="meta-author">
+          <img src="../assets/Flowvanta Hologram.png" alt="Flowvanta" class="author-avatar">
+          Flowvanta Engineering
+        </div>
+        <span>May 2026</span>
+        <span>8 min read</span>
+      </div>
+    </header>
+
+    <div class="article-body">
+
+      <p>When a FinTech client came to us with 500+ support emails landing daily — and a 4-person team manually reading, categorising, and drafting replies to each one — we knew automation could solve most of it. What we didn't expect was how completely it would.</p>
+
+      <p>After 30 days live, the AI triage system we built in n8n had reduced their support overhead by <strong>98%</strong>. Here's exactly how we built it, what it costs to run, and the numbers that matter.</p>
+
+      <div class="stat-row">
+        <div class="stat-cell"><div class="stat-n">98%</div><div class="stat-l">Cost reduction</div></div>
+        <div class="stat-cell"><div class="stat-n">$0.03</div><div class="stat-l">Cost per email</div></div>
+        <div class="stat-cell"><div class="stat-n">&lt;90s</div><div class="stat-l">Avg response time</div></div>
+      </div>
+
+      <h2>The problem: 500 emails, 4 people, 12-hour SLAs</h2>
+      <p>The client's support queue was growing faster than their team. Each email required someone to read it, identify what the customer needed, check the knowledge base, draft a reply, and send it. At peak volume, SLAs were slipping to 12+ hours — damaging customer trust and creating a backlog that never fully cleared.</p>
+
+      <div class="callout">
+        <div class="callout-label">The brief</div>
+        <p>Read every inbound support email automatically. Classify it. Draft a reply using our knowledge base. Save the draft to Gmail for a human to review and send in 30 seconds — not 30 minutes.</p>
+      </div>
+
+      <h2>The architecture: a 7-node n8n workflow</h2>
+      <p>The system runs entirely in n8n, triggered by Gmail, and uses GPT-4o for both classification and reply generation. Here's the flow:</p>
+      <ol>
+        <li><strong>Gmail Trigger</strong> — polls for new unread emails in the support inbox every minute</li>
+        <li><strong>Parse &amp; Validate</strong> — strips signatures, auto-replies, and spam using a Code node</li>
+        <li><strong>AI Classify</strong> — GPT-4o reads the email and outputs category, urgency, sentiment, and a 1-line summary</li>
+        <li><strong>DB — Fetch KB Data</strong> — pulls the 5 most relevant knowledge base entries by category from PostgreSQL</li>
+        <li><strong>Assemble Draft Prompt</strong> — builds a system + user prompt combining the email context and KB results</li>
+        <li><strong>AI Agent — Generate Draft</strong> — GPT-4o writes the full reply, following brand voice guidelines</li>
+        <li><strong>Gmail — Save Draft</strong> — pushes the draft directly to the correct Gmail thread, ready for human review</li>
+      </ol>
+
+      <h2>What's inside the full article</h2>
+      <ul>
+        <li>The complete n8n workflow JSON you can import directly</li>
+        <li>The exact GPT-4o system prompt we use for classification and drafting</li>
+        <li>PostgreSQL schema for the knowledge base and email log tables</li>
+        <li>How we handle edge cases: auto-replies, multi-language emails, sensitive content</li>
+        <li>Month 1 vs Month 3 performance comparison after the self-learning loop was added</li>
+        <li>Cost breakdown: what it actually costs per 1,000 emails processed</li>
+      </ul>
+
+      <div class="coming-soon">
+        <div class="cs-icon">✍️</div>
+        <div class="cs-title">Full article coming soon</div>
+        <div class="cs-sub">We're writing up the complete technical breakdown with workflow JSON, prompts, and database schema. Subscribe below to get it the moment it drops.</div>
+      </div>
+
+    </div>
+
+    <!-- Newsletter -->
+    <div class="nl-box">
+      <h3>Get the full breakdown when it's published</h3>
+      <p>Plus weekly automation workflows, n8n tips, and real ROI numbers — straight to your inbox.</p>
+      <form class="nl-form" onsubmit="handleNl(event)">
+        <input type="email" class="nl-input" placeholder="you@company.com" required id="nlEmailArticle">
+        <button type="submit" class="nl-btn">Notify me →</button>
+      </form>
+      <p class="nl-note" id="nlMsg">No spam. Unsubscribe any time.</p>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-strip">
+      <div class="cta-strip-text">
+        <h4>Want this built for your business?</h4>
+        <p>We can have an AI email triage system live in your inbox within 2 weeks.</p>
+      </div>
+      <a href="/#contact" class="btn-grad">Book a free call →</a>
+    </div>
+
+  </article>
+</div>
+
+<footer><div class="container">© 2026 <a href="/">Flowvanta.dev</a> — All rights reserved</div></footer>
+
+<script>
+function handleNl(e) {
+  e.preventDefault();
+  const email = document.getElementById('nlEmailArticle').value;
+  fetch('https://formsubmit.co/ajax/vivek@flowvanta.dev', {
+    method:'POST',
+    headers:{'Content-Type':'application/json',Accept:'application/json'},
+    body: JSON.stringify({ _subject:'Article subscriber — AI Email Triage', email, source:'blog/ai-email-triage-n8n', _template:'table' })
+  }).catch(()=>{});
+  document.getElementById('nlMsg').textContent = "✅ You're in! We'll email you when it's live.";
+  document.getElementById('nlMsg').style.color = '#6EE7B7';
+  e.target.querySelector('input').value = '';
+}
+</script>
+</body>
+</html>

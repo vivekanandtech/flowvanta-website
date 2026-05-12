@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>n8n vs Zapier vs Make.com: Which Is Right for Your Business in 2026? | Flowvanta</title>
+<meta name="description" content="An honest, technical comparison of n8n, Zapier, and Make.com covering pricing, scalability, self-hosting, and which one fits which use case — from engineers who've built on all three.">
+<link rel="canonical" href="https://flowvanta.dev/blog/n8n-vs-zapier-vs-make.html">
+<link rel="icon" type="image/png" href="../assets/Flowvanta Hologram.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+  :root{--purple:#6D28D9;--purple-l:#8B5CF6;--blue:#2563EB;--grad:linear-gradient(135deg,#6D28D9 0%,#2563EB 100%);--t1:#06020F;--t2:#4B5268;--t3:#94A3B8;--border:#E4E2F0;--bg-alt:#F5F3FF;--bg-dark:#0D0A1E;--white:#fff;--r-xl:20px;--r-md:14px;--shadow-md:0 4px 16px rgba(13,10,30,0.08)}
+  body{font-family:'Plus Jakarta Sans',sans-serif;color:var(--t1);background:var(--white);-webkit-font-smoothing:antialiased;line-height:1.6}
+  a{color:inherit;text-decoration:none}
+  .container{max-width:760px;margin-inline:auto;padding-inline:clamp(20px,5vw,40px)}
+  .container-wide{max-width:1100px;margin-inline:auto;padding-inline:clamp(20px,5vw,60px)}
+  nav{background:rgba(255,255,255,0.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px 0;position:sticky;top:0;z-index:100}
+  .nav-inner{display:flex;align-items:center;justify-content:space-between}
+  .nav-logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.1rem;letter-spacing:-0.03em}
+  .nav-back{font-size:.875rem;font-weight:600;color:var(--t2);transition:color .2s}
+  .nav-back:hover{color:var(--purple)}
+  .article-hero{padding:64px 0 48px;border-bottom:1px solid var(--border)}
+  .article-tag{display:inline-flex;align-items:center;padding:4px 12px;border-radius:100px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;background:#EFF6FF;color:#1E40AF;border:1px solid #BFDBFE;margin-bottom:20px}
+  .article-title{font-size:clamp(1.9rem,4.5vw,3rem);font-weight:900;letter-spacing:-0.04em;line-height:1.1;color:var(--t1);margin-bottom:20px}
+  .article-meta{display:flex;flex-wrap:wrap;align-items:center;gap:16px;font-size:.8125rem;color:var(--t3);padding-bottom:28px;border-bottom:1px solid var(--border);margin-bottom:36px}
+  .meta-author{display:flex;align-items:center;gap:8px;font-weight:600;color:var(--t2)}
+  .article-body p{font-size:1.0625rem;color:var(--t2);line-height:1.85;margin-bottom:22px}
+  .article-body h2{font-size:1.5rem;font-weight:800;letter-spacing:-0.03em;color:var(--t1);margin:40px 0 16px}
+  .article-body ul,.article-body ol{padding-left:24px;margin-bottom:22px;display:flex;flex-direction:column;gap:10px}
+  .article-body li{font-size:1.0625rem;color:var(--t2);line-height:1.75}
+  .article-body strong{color:var(--t1);font-weight:700}
+  .callout{background:var(--bg-alt);border:1.5px solid #DDD6FE;border-radius:var(--r-md);padding:24px 28px;margin:32px 0}
+  .callout-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);font-weight:600;margin-bottom:10px}
+  .callout p{margin-bottom:0;color:var(--t1)}
+
+  /* Comparison table */
+  .compare-table{width:100%;border-collapse:collapse;margin:32px 0;font-size:.9rem}
+  .compare-table th{background:var(--bg-alt);padding:12px 16px;text-align:left;font-weight:700;color:var(--t1);border:1px solid var(--border);font-size:.8125rem}
+  .compare-table td{padding:12px 16px;border:1px solid var(--border);color:var(--t2);vertical-align:top}
+  .compare-table tr:hover td{background:#FAFAF9}
+  .tag-win{display:inline-block;padding:2px 8px;border-radius:100px;background:#ECFDF5;color:#065F46;font-size:.7rem;font-weight:700;border:1px solid #6EE7B7;margin-left:4px}
+
+  .coming-soon{background:linear-gradient(135deg,#F5F3FF,#EFF6FF);border:1.5px solid #DDD6FE;border-radius:var(--r-xl);padding:40px 36px;text-align:center;margin:48px 0}
+  .cs-icon{font-size:2.5rem;margin-bottom:16px}
+  .cs-title{font-size:1.25rem;font-weight:800;color:var(--t1);margin-bottom:8px;letter-spacing:-0.02em}
+  .cs-sub{font-size:.9375rem;color:var(--t2);line-height:1.7;max-width:400px;margin:0 auto 24px}
+  .nl-box{background:var(--bg-dark);border-radius:var(--r-xl);padding:clamp(32px,5vw,48px);margin:48px 0;text-align:center}
+  .nl-box h3{font-size:1.375rem;font-weight:800;color:#fff;letter-spacing:-0.03em;margin-bottom:8px}
+  .nl-box p{font-size:.9375rem;color:rgba(255,255,255,0.6);margin-bottom:24px}
+  .nl-form{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:480px;margin:0 auto}
+  .nl-input{flex:1;min-width:200px;padding:12px 16px;border-radius:10px;border:1.5px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.07);color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:.9375rem;outline:none}
+  .nl-input::placeholder{color:rgba(255,255,255,0.35)}
+  .nl-btn{padding:12px 24px;border-radius:10px;background:linear-gradient(135deg,#7C3AED,#2563EB);color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:.9375rem;font-weight:700;border:none;cursor:pointer}
+  .nl-note{font-size:.75rem;color:rgba(255,255,255,0.3);margin-top:10px}
+  .cta-strip{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;background:#F5F3FF;border:1px solid #DDD6FE;border-radius:var(--r-xl);padding:28px 32px;margin:40px 0}
+  .cta-strip-text h4{font-size:1.0625rem;font-weight:800;color:var(--t1);margin-bottom:4px}
+  .cta-strip-text p{font-size:.875rem;color:var(--t2)}
+  .btn-grad{padding:12px 24px;border-radius:10px;background:var(--grad);color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:.875rem;font-weight:700;border:none;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+  footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;color:var(--t3);font-size:.8125rem}
+  footer a{color:var(--purple)}
+  @media(max-width:600px){.compare-table{font-size:.8rem}.compare-table th,.compare-table td{padding:8px 10px}}
+</style>
+</head>
+<body>
+
+<nav><div class="container-wide nav-inner">
+  <a href="/" class="nav-logo">
+    <img src="../assets/Flowvanta Hologram.png" alt="Flowvanta" style="width:32px;height:32px;object-fit:contain">
+    Flowvanta
+  </a>
+  <a href="/blog/" class="nav-back">← All articles</a>
+</div></nav>
+
+<div class="container">
+  <article>
+
+    <header class="article-hero">
+      <span class="article-tag">Workflow Guide</span>
+      <h1 class="article-title">n8n vs Zapier vs Make.com: Which Is Right for Your Business in 2026?</h1>
+      <div class="article-meta">
+        <div class="meta-author">
+          <img src="../assets/Flowvanta Hologram.png" alt="Flowvanta" style="width:28px;height:28px;border-radius:50%;object-fit:contain">
+          Flowvanta Engineering
+        </div>
+        <span>May 2026</span>
+        <span>12 min read</span>
+      </div>
+    </header>
+
+    <div class="article-body">
+
+      <p>We've built production automation systems on all three platforms. Not demos — real systems handling thousands of executions daily for paying clients across FinTech, SaaS, and e-commerce. This comparison is based on that experience, not spec sheets.</p>
+
+      <p>The short answer: <strong>n8n wins on cost and flexibility, Zapier wins on simplicity, Make wins on visual complexity</strong>. But the right choice depends entirely on your use case, team, and growth trajectory.</p>
+
+      <div class="callout">
+        <div class="callout-label">Our verdict upfront</div>
+        <p>For most growing businesses that need custom, scalable automation: <strong>n8n self-hosted</strong>. For non-technical teams that need something running in an afternoon: <strong>Zapier</strong>. For complex multi-branch visual workflows without code: <strong>Make.com</strong>.</p>
+      </div>
+
+      <h2>Quick comparison at a glance</h2>
+
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Factor</th>
+            <th>n8n</th>
+            <th>Zapier</th>
+            <th>Make.com</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Pricing model</strong></td>
+            <td>Free self-hosted / ~$24/mo cloud <span class="tag-win">Best</span></td>
+            <td>From $20/mo — scales steeply</td>
+            <td>From $9/mo — ops-based</td>
+          </tr>
+          <tr>
+            <td><strong>Technical skill needed</strong></td>
+            <td>Medium — some JSON/code helps</td>
+            <td>Low — anyone can use it <span class="tag-win">Best</span></td>
+            <td>Low-Medium</td>
+          </tr>
+          <tr>
+            <td><strong>Self-hostable</strong></td>
+            <td>Yes — full control <span class="tag-win">Best</span></td>
+            <td>No</td>
+            <td>No</td>
+          </tr>
+          <tr>
+            <td><strong>AI / LLM nodes</strong></td>
+            <td>Native LangChain, OpenAI, agents <span class="tag-win">Best</span></td>
+            <td>Limited, via Zapier AI</td>
+            <td>HTTP modules only</td>
+          </tr>
+          <tr>
+            <td><strong>Custom code</strong></td>
+            <td>Full JS/Python nodes <span class="tag-win">Best</span></td>
+            <td>Code step (JS only)</td>
+            <td>Limited</td>
+          </tr>
+          <tr>
+            <td><strong>Native integrations</strong></td>
+            <td>400+</td>
+            <td>6,000+ <span class="tag-win">Best</span></td>
+            <td>1,500+</td>
+          </tr>
+          <tr>
+            <td><strong>Execution limits</strong></td>
+            <td>Unlimited self-hosted <span class="tag-win">Best</span></td>
+            <td>Task-based — gets expensive fast</td>
+            <td>Ops-based</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>What the full article covers</h2>
+      <ul>
+        <li>Real cost comparison at 10k, 100k, and 1M executions/month</li>
+        <li>When Zapier's 6,000 integrations actually matter (and when they don't)</li>
+        <li>Self-hosting n8n on Docker in 15 minutes — why it changes the economics entirely</li>
+        <li>Make.com's scenario builder vs n8n's canvas — which is actually faster to build in</li>
+        <li>Error handling and reliability comparison across all three</li>
+        <li>Which platform our clients are migrating away from and why</li>
+      </ul>
+
+      <div class="coming-soon">
+        <div class="cs-icon">📊</div>
+        <div class="cs-title">Full comparison coming soon</div>
+        <div class="cs-sub">The detailed breakdown with real cost numbers, migration stories, and our platform recommendation framework is being written now. Subscribe to get it first.</div>
+      </div>
+
+    </div>
+
+    <div class="nl-box">
+      <h3>Get the full comparison when it's ready</h3>
+      <p>Plus weekly n8n workflows and automation breakdowns straight to your inbox.</p>
+      <form class="nl-form" onsubmit="handleNl(event)">
+        <input type="email" class="nl-input" placeholder="you@company.com" required id="nlEmail2">
+        <button type="submit" class="nl-btn">Notify me →</button>
+      </form>
+      <p class="nl-note" id="nlMsg2">No spam. Unsubscribe any time.</p>
+    </div>
+
+    <div class="cta-strip">
+      <div class="cta-strip-text">
+        <h4>Not sure which platform to use?</h4>
+        <p>We'll tell you in 30 minutes — free, no pitch.</p>
+      </div>
+      <a href="/#contact" class="btn-grad">Book a free call →</a>
+    </div>
+
+  </article>
+</div>
+
+<footer><div class="container">© 2026 <a href="/">Flowvanta.dev</a> — All rights reserved</div></footer>
+
+<script>
+function handleNl(e) {
+  e.preventDefault();
+  const email = document.getElementById('nlEmail2').value;
+  fetch('https://formsubmit.co/ajax/vivek@flowvanta.dev', {
+    method:'POST', headers:{'Content-Type':'application/json',Accept:'application/json'},
+    body: JSON.stringify({_subject:'Article subscriber — n8n vs Zapier vs Make', email, source:'blog/n8n-vs-zapier-vs-make', _template:'table'})
+  }).catch(()=>{});
+  document.getElementById('nlMsg2').textContent = "✅ You're in! We'll email you when it's live.";
+  document.getElementById('nlMsg2').style.color = '#6EE7B7';
+  e.target.querySelector('input').value = '';
+}
+</script>
+</body>
+</html>
