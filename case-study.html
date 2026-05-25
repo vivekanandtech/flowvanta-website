@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Automation Case Study: 80% Manual Effort Reduction | Flowvanta</title>
+<meta name="description" content="How Flowvanta reduced manual effort by 80% for a US telecom client using AI automation and n8n workflows. Real numbers, real delivery.">
+<link rel="canonical" href="https://flowvanta.dev/case-study">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+
+/* ═══════════════════════ RESET & BASE ═══════════════════════ */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box }
+html { -webkit-print-color-adjust: exact; print-color-adjust: exact }
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: #fff;
+  color: #0A0714;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ═══════════════════════ PAGE SETUP ═══════════════════════ */
+.page {
+  width: 210mm;
+  min-height: 297mm;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+  page-break-after: always;
+}
+@media print {
+  .page { page-break-after: always; margin: 0; box-shadow: none }
+  @page { size: A4; margin: 0 }
+}
+@media screen {
+  body { background: #E8E8F0; padding: 32px 0 }
+  .page {
+    box-shadow: 0 8px 48px rgba(0,0,0,0.18);
+    margin-bottom: 32px;
+  }
+}
+
+/* ═══════════════════════ DESIGN TOKENS ═══════════════════════ */
+:root {
+  --purple: #6D28D9;
+  --blue:   #2563EB;
+  --grad:   linear-gradient(135deg, #6D28D9 0%, #2563EB 100%);
+  --grad-r: linear-gradient(135deg, #2563EB 0%, #6D28D9 100%);
+  --dark:   #0D0A1E;
+  --t1:     #0A0714;
+  --t2:     #4B5268;
+  --t3:     #94A3B8;
+  --border: #E4E2F0;
+  --bg-alt: #F5F3FF;
+}
+
+/* ═══════════════════════════════════════════════════
+   PAGE 1 — COVER
+═══════════════════════════════════════════════════ */
+.p1 { background: var(--dark); color: #fff }
+
+.p1-bg-orb {
+  position: absolute; border-radius: 50%; pointer-events: none;
+}
+.p1-orb1 {
+  width: 420px; height: 420px;
+  background: radial-gradient(circle, rgba(109,40,217,0.35) 0%, transparent 70%);
+  top: -120px; right: -80px;
+}
+.p1-orb2 {
+  width: 340px; height: 340px;
+  background: radial-gradient(circle, rgba(37,99,235,0.25) 0%, transparent 70%);
+  bottom: -80px; left: -60px;
+}
+.p1-orb3 {
+  width: 240px; height: 240px;
+  background: radial-gradient(circle, rgba(109,40,217,0.18) 0%, transparent 70%);
+  top: 45%; left: 10%;
+}
+
+.p1-inner {
+  position: relative; z-index: 1;
+  padding: 52px 56px;
+  display: flex; flex-direction: column;
+  min-height: 297mm;
+}
+
+/* Top bar */
+.p1-topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 80px;
+}
+.p1-logo {
+  display: flex; align-items: center; gap: 12px;
+  font-weight: 800; font-size: 1.25rem; letter-spacing: -0.03em; color: #fff;
+}
+.p1-logo-mark {
+  width: 40px; height: 40px; border-radius: 12px;
+  background: var(--grad);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.p1-logo-mark img { width: 40px; height: 40px; object-fit: contain }
+.p1-badge {
+  padding: 6px 16px; border-radius: 100px;
+  border: 1px solid rgba(255,255,255,0.2);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: rgba(255,255,255,0.6);
+}
+
+/* Hero text */
+.p1-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: rgba(196,181,253,0.9); margin-bottom: 20px;
+}
+.p1-headline {
+  font-size: 3.6rem; font-weight: 900; letter-spacing: -0.05em; line-height: 1.0;
+  color: #fff; margin-bottom: 28px;
+}
+.p1-headline span {
+  background: linear-gradient(120deg, #C4B5FD, #93C5FD);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.p1-sub {
+  font-size: 1.0625rem; color: rgba(255,255,255,0.6); line-height: 1.75;
+  max-width: 480px; margin-bottom: 56px;
+}
+
+/* Stats row */
+.p1-stats {
+  display: flex; gap: 0;
+  border: 1px solid rgba(255,255,255,0.12); border-radius: 16px;
+  overflow: hidden; max-width: 560px; margin-bottom: 80px;
+}
+.p1-stat {
+  flex: 1; padding: 24px 20px; text-align: center;
+  border-right: 1px solid rgba(255,255,255,0.10);
+}
+.p1-stat:last-child { border-right: none }
+.p1-stat-n {
+  font-size: 2.4rem; font-weight: 900; letter-spacing: -0.05em; line-height: 1;
+  background: linear-gradient(120deg, #C4B5FD, #93C5FD);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  display: block; margin-bottom: 6px;
+}
+.p1-stat-l { font-size: 0.75rem; color: rgba(255,255,255,0.45); font-weight: 500 }
+
+/* Bottom info */
+.p1-bottom {
+  margin-top: auto;
+  display: flex; align-items: flex-end; justify-content: space-between;
+}
+.p1-project-meta { display: flex; flex-direction: column; gap: 6px }
+.p1-meta-row {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 0.8125rem; color: rgba(255,255,255,0.4);
+}
+.p1-meta-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 9px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: rgba(255,255,255,0.25); min-width: 72px;
+}
+.p1-meta-val { color: rgba(255,255,255,0.7); font-weight: 500 }
+.p1-url {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.875rem;
+  color: #C4B5FD; letter-spacing: 0.02em;
+}
+
+/* ═══════════════════════════════════════════════════
+   PAGE 2 — PROBLEM & SOLUTION
+═══════════════════════════════════════════════════ */
+.p2-inner { padding: 52px 56px; min-height: 297mm; display: flex; flex-direction: column }
+
+.page-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-bottom: 24px; border-bottom: 1px solid var(--border);
+  margin-bottom: 48px;
+}
+.ph-logo {
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 800; font-size: 1rem; color: var(--t1); letter-spacing: -0.02em;
+}
+.ph-logo-mark {
+  width: 28px; height: 28px; border-radius: 8px;
+  background: var(--grad); overflow: hidden;
+}
+.ph-logo-mark img { width: 28px; height: 28px; object-fit: contain }
+.ph-section {
+  font-family: 'JetBrains Mono', monospace; font-size: 9px;
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--t3);
+}
+
+.sec-eyebrow {
+  font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--purple);
+  font-weight: 600; margin-bottom: 10px;
+}
+.sec-h2 {
+  font-size: 1.875rem; font-weight: 900; letter-spacing: -0.04em;
+  line-height: 1.1; color: var(--t1); margin-bottom: 14px;
+}
+.sec-h2 span {
+  background: var(--grad); -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent; background-clip: text;
+}
+.sec-p { font-size: 0.9375rem; color: var(--t2); line-height: 1.8 }
+
+/* Two-col layout */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; margin-bottom: 40px }
+
+/* Problem box */
+.problem-box {
+  background: #FFF1F2; border: 1.5px solid #FECDD3;
+  border-radius: 16px; padding: 28px 24px;
+}
+.prob-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 9px;
+  letter-spacing: 0.14em; text-transform: uppercase; color: #E11D48;
+  font-weight: 600; margin-bottom: 12px;
+}
+.prob-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  margin-bottom: 12px; font-size: 0.875rem; color: #9F1239; line-height: 1.6;
+}
+.prob-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: #E11D48;
+  flex-shrink: 0; margin-top: 6px;
+}
+
+/* Solution box */
+.solution-box {
+  background: var(--bg-alt); border: 1.5px solid #DDD6FE;
+  border-radius: 16px; padding: 28px 24px;
+}
+.sol-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 9px;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--purple);
+  font-weight: 600; margin-bottom: 12px;
+}
+.sol-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  margin-bottom: 12px; font-size: 0.875rem; color: var(--t2); line-height: 1.6;
+}
+.sol-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--purple);
+  flex-shrink: 0; margin-top: 6px;
+}
+
+/* Workflow diagram */
+.flow-diagram {
+  background: var(--dark); border-radius: 16px; padding: 28px 32px;
+  margin-bottom: 40px;
+}
+.flow-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 9px;
+  letter-spacing: 0.14em; text-transform: uppercase; color: rgba(196,181,253,0.7);
+  font-weight: 600; margin-bottom: 20px;
+}
+.flow-row {
+  display: flex; align-items: center; gap: 0; flex-wrap: nowrap;
+}
+.flow-node {
+  flex: 1; text-align: center;
+}
+.flow-node-box {
+  border-radius: 10px; padding: 12px 8px; margin-bottom: 6px;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+}
+.fn-trigger { background: rgba(249,115,22,0.15); border: 1px solid rgba(249,115,22,0.3) }
+.fn-action  { background: rgba(37,99,235,0.15);  border: 1px solid rgba(37,99,235,0.3) }
+.fn-ai      { background: rgba(109,40,217,0.2);  border: 1px solid rgba(109,40,217,0.4) }
+.fn-output  { background: rgba(5,150,105,0.15);  border: 1px solid rgba(5,150,105,0.3) }
+.fn-icon { font-size: 16px }
+.fn-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 8px;
+  color: rgba(255,255,255,0.6); text-align: center; line-height: 1.3;
+}
+.flow-arrow {
+  width: 24px; flex-shrink: 0; text-align: center;
+  color: rgba(255,255,255,0.2); font-size: 12px; padding-bottom: 20px;
+}
+
+/* Callout strip */
+.callout-strip {
+  background: linear-gradient(135deg, var(--bg-alt), #EFF6FF);
+  border: 1.5px solid #DDD6FE; border-radius: 12px;
+  padding: 20px 24px; margin-top: auto;
+  display: flex; align-items: center; gap: 16px;
+}
+.cs-icon-wrap {
+  width: 44px; height: 44px; border-radius: 12px;
+  background: var(--grad); display: flex; align-items: center;
+  justify-content: center; font-size: 20px; flex-shrink: 0;
+}
+.cs-text-title { font-size: 0.875rem; font-weight: 700; color: var(--t1); margin-bottom: 2px }
+.cs-text-sub   { font-size: 0.8125rem; color: var(--t2) }
+
+/* ═══════════════════════════════════════════════════
+   PAGE 3 — FEATURES & TECH STACK
+═══════════════════════════════════════════════════ */
+.p3-inner { padding: 52px 56px; min-height: 297mm; display: flex; flex-direction: column }
+
+/* Feature cards grid */
+.features-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 36px;
+}
+.feat-card {
+  border: 1.5px solid var(--border); border-radius: 14px; padding: 22px 20px;
+  position: relative; overflow: hidden;
+}
+.feat-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+}
+.fc-blue::before   { background: linear-gradient(90deg, #2563EB, #7C3AED) }
+.fc-purple::before { background: linear-gradient(90deg, #7C3AED, #C026D3) }
+.fc-green::before  { background: linear-gradient(90deg, #059669, #2563EB) }
+.fc-amber::before  { background: linear-gradient(90deg, #D97706, #DC2626) }
+.feat-icon-wrap {
+  width: 38px; height: 38px; border-radius: 10px; background: var(--bg-alt);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; margin-bottom: 12px; border: 1px solid var(--border);
+}
+.feat-title { font-size: 0.9375rem; font-weight: 700; color: var(--t1); margin-bottom: 6px; letter-spacing: -0.01em }
+.feat-desc  { font-size: 0.8rem; color: var(--t2); line-height: 1.65 }
+.feat-tags  { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px }
+.feat-tag {
+  padding: 2px 8px; border-radius: 100px; background: var(--bg-alt);
+  border: 1px solid var(--border); font-family: 'JetBrains Mono', monospace;
+  font-size: 8.5px; color: var(--t2); letter-spacing: 0.04em;
+}
+
+/* Tech stack */
+.tech-section { margin-bottom: 32px }
+.tech-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 16px;
+}
+.tech-item {
+  background: var(--bg-alt); border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px 16px;
+  display: flex; align-items: center; gap: 10px;
+}
+.tech-icon-box {
+  width: 32px; height: 32px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center; font-size: 16px;
+  flex-shrink: 0;
+}
+.tech-name  { font-size: 0.8125rem; font-weight: 700; color: var(--t1) }
+.tech-desc  { font-size: 0.7rem; color: var(--t3); margin-top: 1px }
+
+/* Deployment strip */
+.deploy-strip {
+  background: var(--dark); border-radius: 14px; padding: 24px 28px; margin-top: auto;
+}
+.deploy-title {
+  font-family: 'JetBrains Mono', monospace; font-size: 9px;
+  letter-spacing: 0.14em; text-transform: uppercase; color: rgba(196,181,253,0.7);
+  margin-bottom: 14px;
+}
+.deploy-row { display: flex; gap: 12px; flex-wrap: wrap }
+.deploy-item {
+  display: flex; align-items: center; gap: 7px;
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px; padding: 8px 14px;
+  font-size: 0.8rem; color: rgba(255,255,255,0.75); font-weight: 500;
+}
+.deploy-item span { font-size: 14px }
+
+/* ═══════════════════════════════════════════════════
+   PAGE 4 — RESULTS, TESTIMONIALS & CTA
+═══════════════════════════════════════════════════ */
+.p4-inner { padding: 52px 56px; min-height: 297mm; display: flex; flex-direction: column }
+
+/* Impact numbers */
+.impact-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+  background: var(--border); border-radius: 14px; overflow: hidden;
+  margin-bottom: 36px;
+}
+.impact-cell {
+  background: #fff; padding: 28px 16px; text-align: center;
+}
+.impact-n {
+  font-size: 2.4rem; font-weight: 900; letter-spacing: -0.05em; line-height: 1;
+  background: var(--grad); -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent; background-clip: text;
+  display: block; margin-bottom: 6px;
+}
+.impact-label { font-size: 0.75rem; color: var(--t2); font-weight: 600; margin-bottom: 3px }
+.impact-sub   { font-size: 0.6875rem; color: var(--t3); line-height: 1.4 }
+
+/* Testimonials */
+.testi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px }
+.testi-card {
+  border: 1.5px solid var(--border); border-radius: 14px; padding: 22px 20px;
+  position: relative;
+}
+.testi-stars { color: #F59E0B; font-size: 13px; letter-spacing: 2px; margin-bottom: 10px }
+.testi-quote { font-size: 0.8125rem; color: var(--t2); line-height: 1.75; font-style: italic; margin-bottom: 14px }
+.testi-author { display: flex; align-items: center; gap: 10px; padding-top: 12px; border-top: 1px solid var(--border) }
+.testi-avatar {
+  width: 32px; height: 32px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 11px; color: #fff; flex-shrink: 0;
+}
+.testi-name { font-size: 0.8125rem; font-weight: 700; color: var(--t1) }
+.testi-role { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--t3); letter-spacing: 0.06em; margin-top: 1px }
+
+/* CTA panel */
+.cta-panel {
+  background: var(--dark); border-radius: 18px; padding: 40px;
+  display: flex; align-items: center; justify-content: space-between; gap: 32px;
+  margin-top: auto;
+}
+.cta-left { flex: 1 }
+.cta-eyebrow {
+  font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  letter-spacing: 0.14em; text-transform: uppercase; color: rgba(196,181,253,0.7);
+  margin-bottom: 10px;
+}
+.cta-title {
+  font-size: 1.5rem; font-weight: 900; letter-spacing: -0.04em; color: #fff;
+  line-height: 1.15; margin-bottom: 10px;
+}
+.cta-title span {
+  background: linear-gradient(120deg, #C4B5FD, #93C5FD);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.cta-sub { font-size: 0.875rem; color: rgba(255,255,255,0.55); line-height: 1.65 }
+.cta-right { display: flex; flex-direction: column; gap: 12px; flex-shrink: 0 }
+.cta-contact-item {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 0.8125rem; color: rgba(255,255,255,0.6);
+}
+.cta-contact-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 9px;
+  letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.3);
+  min-width: 52px;
+}
+.cta-contact-val { color: #C4B5FD; font-weight: 600 }
+.cta-btn {
+  margin-top: 8px; padding: 12px 24px; border-radius: 10px;
+  background: linear-gradient(135deg, #7C3AED, #2563EB);
+  color: #fff; font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.875rem; font-weight: 700; border: none; text-align: center;
+  display: block;
+}
+
+/* Page footer */
+.page-footer {
+  margin-top: 32px; padding-top: 20px; border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.pf-copy { font-size: 0.75rem; color: var(--t3) }
+.pf-url  { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--purple) }
+
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════
+     PAGE 1 — COVER
+════════════════════════════════════ -->
+<div class="page p1">
+  <div class="p1-bg-orb p1-orb1"></div>
+  <div class="p1-bg-orb p1-orb2"></div>
+  <div class="p1-bg-orb p1-orb3"></div>
+  <div class="p1-inner">
+
+    <div class="p1-topbar">
+      <div class="p1-logo">
+        <div class="p1-logo-mark">
+          <img src="assets/flowvanta-icon.png" alt="Flowvanta">
+        </div>
+        Flowvanta
+      </div>
+      <div class="p1-badge">Case Study · 2026</div>
+    </div>
+
+    <div class="p1-eyebrow">Automation Agency Platform</div>
+    <h1 class="p1-headline">
+      We automate the work<br><span>slowing you down.</span>
+    </h1>
+    <p class="p1-sub">
+      Flowvanta.dev is a live B2B automation agency platform built from scratch — featuring an AI-powered workflow blueprint generator, enterprise-grade architecture, and a full Cloudflare deployment pipeline.
+    </p>
+
+    <div class="p1-stats">
+      <div class="p1-stat">
+        <span class="p1-stat-n">98%</span>
+        <div class="p1-stat-l">Cost Reduction Delivered</div>
+      </div>
+      <div class="p1-stat">
+        <span class="p1-stat-n">50+</span>
+        <div class="p1-stat-l">Workflows Shipped</div>
+      </div>
+      <div class="p1-stat">
+        <span class="p1-stat-n">12+</span>
+        <div class="p1-stat-l">Years Experience</div>
+      </div>
+    </div>
+
+    <div class="p1-bottom">
+      <div class="p1-project-meta">
+        <div class="p1-meta-row">
+          <span class="p1-meta-label">Platform</span>
+          <span class="p1-meta-val">flowvanta.dev</span>
+        </div>
+        <div class="p1-meta-row">
+          <span class="p1-meta-label">Role</span>
+          <span class="p1-meta-val">Founder & Lead Engineer</span>
+        </div>
+        <div class="p1-meta-row">
+          <span class="p1-meta-label">Stack</span>
+          <span class="p1-meta-val">HTML/CSS/JS · Cloudflare Workers · GPT-4o · Python</span>
+        </div>
+        <div class="p1-meta-row">
+          <span class="p1-meta-label">Delivered</span>
+          <span class="p1-meta-val">May 2026</span>
+        </div>
+      </div>
+      <div class="p1-url">flowvanta.dev</div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════
+     PAGE 2 — PROBLEM & SOLUTION
+════════════════════════════════════ -->
+<div class="page">
+  <div class="p2-inner">
+
+    <div class="page-header">
+      <div class="ph-logo">
+        <div class="ph-logo-mark"><img src="assets/flowvanta-icon.png" alt="Flowvanta"></div>
+        Flowvanta
+      </div>
+      <div class="ph-section">Problem & Solution</div>
+    </div>
+
+    <div style="margin-bottom:36px">
+      <div class="sec-eyebrow">The Challenge</div>
+      <h2 class="sec-h2">Businesses are drowning in<br><span>manual, repetitive work.</span></h2>
+      <p class="sec-p" style="max-width:560px">
+        Growing businesses spend thousands of hours on tasks that should be automated. The problem isn't awareness — it's access. Enterprise-grade automation expertise is expensive, hard to find, and typically locked behind agencies that charge ten times more than necessary.
+      </p>
+    </div>
+
+    <div class="two-col">
+      <div class="problem-box">
+        <div class="prob-label">⚠ The Problems</div>
+        <div class="prob-item"><span class="prob-dot"></span>Support teams reading and drafting 500+ emails a day manually</div>
+        <div class="prob-item"><span class="prob-dot"></span>Data copied between tools by hand — CRMs, Sheets, Slack, Notion</div>
+        <div class="prob-item"><span class="prob-dot"></span>Weekly reports built manually from multiple spreadsheets</div>
+        <div class="prob-item"><span class="prob-dot"></span>Invoice processing sitting in email inboxes for days</div>
+        <div class="prob-item"><span class="prob-dot"></span>New customer onboarding taking 3 days of manual back-and-forth</div>
+      </div>
+      <div class="solution-box">
+        <div class="sol-label">✓ The Flowvanta Solution</div>
+        <div class="sol-item"><span class="sol-dot"></span>AI-powered workflow design — describe your problem, get an architecture instantly</div>
+        <div class="sol-item"><span class="sol-dot"></span>Production-grade n8n workflows connecting any app or API</div>
+        <div class="sol-item"><span class="sol-dot"></span>LLM-powered email triage, CRM sync, and reporting pipelines</div>
+        <div class="sol-item"><span class="sol-dot"></span>Delivered in weeks, not months — with full documentation</div>
+        <div class="sol-item"><span class="sol-dot"></span>Systems that run 24/7 without human intervention</div>
+      </div>
+    </div>
+
+    <div class="flow-diagram">
+      <div class="flow-label">AI Email Triage System — Live Production Architecture</div>
+      <div class="flow-row">
+        <div class="flow-node">
+          <div class="flow-node-box fn-trigger">
+            <span class="fn-icon">📧</span>
+            <div class="fn-label">Gmail<br>Trigger</div>
+          </div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">
+          <div class="flow-node-box fn-ai">
+            <span class="fn-icon">🔍</span>
+            <div class="fn-label">AI<br>Classify</div>
+          </div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">
+          <div class="flow-node-box fn-action">
+            <span class="fn-icon">🗄️</span>
+            <div class="fn-label">Fetch<br>KB Data</div>
+          </div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">
+          <div class="flow-node-box fn-ai">
+            <span class="fn-icon">✍️</span>
+            <div class="fn-label">GPT-4o<br>Draft Reply</div>
+          </div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">
+          <div class="flow-node-box fn-action">
+            <span class="fn-icon">👤</span>
+            <div class="fn-label">Human<br>Review</div>
+          </div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">
+          <div class="flow-node-box fn-output">
+            <span class="fn-icon">✅</span>
+            <div class="fn-label">Send<br>Reply</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout-strip">
+      <div class="cs-icon-wrap">⚡</div>
+      <div>
+        <div class="cs-text-title">Result: 98% reduction in support overhead</div>
+        <div class="cs-text-sub">From $50k+/month team cost to under $1k in automation overhead — paid for itself within 30 days of going live.</div>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <span class="pf-copy">© 2026 Flowvanta — Confidential Case Study</span>
+      <span class="pf-url">flowvanta.dev</span>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════
+     PAGE 3 — FEATURES & TECH STACK
+════════════════════════════════════ -->
+<div class="page">
+  <div class="p3-inner">
+
+    <div class="page-header">
+      <div class="ph-logo">
+        <div class="ph-logo-mark"><img src="assets/flowvanta-icon.png" alt="Flowvanta"></div>
+        Flowvanta
+      </div>
+      <div class="ph-section">Platform Features & Stack</div>
+    </div>
+
+    <div style="margin-bottom:24px">
+      <div class="sec-eyebrow">What Was Built</div>
+      <h2 class="sec-h2" style="font-size:1.625rem">Platform features built <span>end-to-end</span></h2>
+    </div>
+
+    <div class="features-grid">
+      <div class="feat-card fc-purple">
+        <div class="feat-icon-wrap">🤖</div>
+        <div class="feat-title">AI Blueprint Generator</div>
+        <div class="feat-desc">Users describe their automation problem, sign in with Google, and receive a custom GPT-4o generated workflow architecture in seconds. Cloudflare Worker proxy keeps the API key fully secured server-side.</div>
+        <div class="feat-tags">
+          <span class="feat-tag">GPT-4o</span>
+          <span class="feat-tag">Google OAuth</span>
+          <span class="feat-tag">Cloudflare Worker</span>
+        </div>
+      </div>
+
+      <div class="feat-card fc-blue">
+        <div class="feat-icon-wrap">🎨</div>
+        <div class="feat-title">Animated Hero Canvas</div>
+        <div class="feat-desc">Custom canvas-based animations: 75 star particles with blink physics, shooting stars every 4-8 seconds, cursor glow with particle attraction, click burst + ripple effects. Fully optimised — 45 particles on mobile.</div>
+        <div class="feat-tags">
+          <span class="feat-tag">Canvas API</span>
+          <span class="feat-tag">requestAnimationFrame</span>
+          <span class="feat-tag">Physics</span>
+        </div>
+      </div>
+
+      <div class="feat-card fc-green">
+        <div class="feat-icon-wrap">📰</div>
+        <div class="feat-title">SEO Blog + Newsletter</div>
+        <div class="feat-desc">4-page blog with structured article templates, newsletter email capture wired to notification system, infinite scrolling testimonial marquee, and full Open Graph + JSON-LD structured data for Google rich results.</div>
+        <div class="feat-tags">
+          <span class="feat-tag">SEO</span>
+          <span class="feat-tag">JSON-LD</span>
+          <span class="feat-tag">formsubmit.co</span>
+        </div>
+      </div>
+
+      <div class="feat-card fc-amber">
+        <div class="feat-icon-wrap">🔐</div>
+        <div class="feat-title">Production Security & CI/CD</div>
+        <div class="feat-desc">Google Sign-In modal with real OAuth enforcement — no dev bypass. OpenAI key secured as Cloudflare Worker secret. Full CI/CD pipeline: GitHub push → Cloudflare Pages auto-deploy. favicon.ico with multi-size ICO.</div>
+        <div class="feat-tags">
+          <span class="feat-tag">Google OAuth 2.0</span>
+          <span class="feat-tag">Wrangler CLI</span>
+          <span class="feat-tag">GitHub Actions</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tech-section">
+      <div class="sec-eyebrow">Technology Stack</div>
+      <div class="tech-grid">
+        <div class="tech-item">
+          <div class="tech-icon-box" style="background:#FFF7ED">⚡</div>
+          <div><div class="tech-name">n8n</div><div class="tech-desc">Workflow engine</div></div>
+        </div>
+        <div class="tech-item">
+          <div class="tech-icon-box" style="background:#F5F3FF">🤖</div>
+          <div><div class="tech-name">GPT-4o / Claude</div><div class="tech-desc">AI generation</div></div>
+        </div>
+        <div class="tech-item">
+          <div class="tech-icon-box" style="background:#EFF6FF">☁️</div>
+          <div><div class="tech-name">Cloudflare</div><div class="tech-desc">Pages + Workers</div></div>
+        </div>
+        <div class="tech-item">
+          <div class="tech-icon-box" style="background:#ECFDF5">🐍</div>
+          <div><div class="tech-name">Python</div><div class="tech-desc">Image processing</div></div>
+        </div>
+        <div class="tech-item">
+          <div class="tech-icon-box" style="background:#FEF3C7">🔑</div>
+          <div><div class="tech-name">Google OAuth 2.0</div><div class="tech-desc">Authentication</div></div>
+        </div>
+        <div class="tech-item">
+          <div class="tech-icon-box" style="background:#F1F5F9">🛠</div>
+          <div><div class="tech-name">Vanilla JS</div><div class="tech-desc">No framework</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="deploy-strip">
+      <div class="deploy-title">Deployment Pipeline</div>
+      <div class="deploy-row">
+        <div class="deploy-item"><span>📝</span> Code in VS Code</div>
+        <div class="deploy-item"><span>📦</span> Git commit + push</div>
+        <div class="deploy-item"><span>🔄</span> GitHub → Cloudflare Pages</div>
+        <div class="deploy-item"><span>⚡</span> Worker deployed via Wrangler</div>
+        <div class="deploy-item"><span>🌐</span> Live at flowvanta.dev</div>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <span class="pf-copy">© 2026 Flowvanta — Confidential Case Study</span>
+      <span class="pf-url">flowvanta.dev</span>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════
+     PAGE 4 — RESULTS & CTA
+════════════════════════════════════ -->
+<div class="page" style="page-break-after:auto">
+  <div class="p4-inner">
+
+    <div class="page-header">
+      <div class="ph-logo">
+        <div class="ph-logo-mark"><img src="assets/flowvanta-icon.png" alt="Flowvanta"></div>
+        Flowvanta
+      </div>
+      <div class="ph-section">Results & Client Feedback</div>
+    </div>
+
+    <div style="margin-bottom:24px">
+      <div class="sec-eyebrow">Measurable Impact</div>
+      <h2 class="sec-h2" style="font-size:1.625rem">Numbers that <span>speak for themselves</span></h2>
+    </div>
+
+    <div class="impact-grid">
+      <div class="impact-cell">
+        <span class="impact-n">98%</span>
+        <div class="impact-label">Cost Reduction</div>
+        <div class="impact-sub">From $50k+/mo team to &lt;$1k automation overhead</div>
+      </div>
+      <div class="impact-cell">
+        <span class="impact-n">80%</span>
+        <div class="impact-label">Manual Effort Saved</div>
+        <div class="impact-sub">US Telecom — 4-person process fully automated</div>
+      </div>
+      <div class="impact-cell">
+        <span class="impact-n">&lt;90s</span>
+        <div class="impact-label">Response Time</div>
+        <div class="impact-sub">Down from 12+ hour manual SLAs</div>
+      </div>
+      <div class="impact-cell">
+        <span class="impact-n">50+</span>
+        <div class="impact-label">Workflows Shipped</div>
+        <div class="impact-sub">Across FinTech, SaaS, EdTech & more</div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:24px">
+      <div class="sec-eyebrow">Client Testimonials</div>
+    </div>
+
+    <div class="testi-grid">
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-quote">"Flowvanta built our AI email triage in under 3 weeks. What used to consume an entire support team now runs automatically — before agents even log in. ROI paid for itself in the first month."</div>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#0057FF,#003DB5)">iM</div>
+          <div>
+            <div class="testi-name">InCred Money</div>
+            <div class="testi-role">FinTech — AI Automation</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-quote">"The n8n workflow replaced a manual process that had 4 people working on it daily. It now runs error-free on its own. Flowvanta understood our business logic immediately — not just the technical side."</div>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#6929C4,#491D8B)">SA</div>
+          <div>
+            <div class="testi-name">Scale AI</div>
+            <div class="testi-role">AI / Data — Workflow Automation</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-quote">"Enterprise thinking, clean architecture, actual documentation. First time I felt confident handing a process off to a system permanently. Flowvanta is in a different league."</div>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#E14D2A,#9C1B04)">LB</div>
+          <div>
+            <div class="testi-name">Labelbox</div>
+            <div class="testi-role">AI Data Platform — DevOps</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-quote">"Our onboarding automation cut setup time from 3 days to 20 minutes. It syncs HubSpot, sends Slack messages, creates Notion docs — all automatically. Zero errors since launch."</div>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#7C3AED,#4C1D95)">Fl</div>
+          <div>
+            <div class="testi-name">FlowState SaaS</div>
+            <div class="testi-role">SaaS — Onboarding Automation</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cta-panel">
+      <div class="cta-left">
+        <div class="cta-eyebrow">Ready to work together?</div>
+        <div class="cta-title">Let's automate<br><span>your biggest bottleneck.</span></div>
+        <div class="cta-sub">Free 30-minute blueprint call. We map your highest-ROI automation opportunity and scope the build — no commitment, no sales pitch.</div>
+      </div>
+      <div class="cta-right">
+        <div class="cta-contact-item">
+          <span class="cta-contact-label">Website</span>
+          <span class="cta-contact-val">flowvanta.dev</span>
+        </div>
+        <div class="cta-contact-item">
+          <span class="cta-contact-label">Email</span>
+          <span class="cta-contact-val">vivek@flowvanta.dev</span>
+        </div>
+        <div class="cta-contact-item">
+          <span class="cta-contact-label">Upwork</span>
+          <span class="cta-contact-val">Top Rated ⭐</span>
+        </div>
+        <div class="cta-contact-item">
+          <span class="cta-contact-label">LinkedIn</span>
+          <span class="cta-contact-val">vivekanandtech</span>
+        </div>
+        <div class="cta-btn">Book a Free Blueprint Call →</div>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <span class="pf-copy">© 2026 Flowvanta — Confidential Case Study</span>
+      <span class="pf-url">flowvanta.dev</span>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>
