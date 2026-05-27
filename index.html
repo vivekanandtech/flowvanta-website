@@ -22,7 +22,7 @@
 <meta property="og:type"        content="website">
 <meta property="og:url"         content="https://flowvanta.dev/">
 <meta property="og:title"       content="Flowvanta — AI Automation & n8n Workflows">
-<meta property="og:description" content="We automate the work slowing you down. Custom n8n workflows, AI systems, and DevOps pipelines — built by engineers with 12+ years of enterprise delivery.">
+<meta property="og:description" content="We automate the work slowing you down. Custom n8n workflows, AI systems, and DevOps pipelines — built by an engineer with 12+ years of enterprise delivery.">
 <meta property="og:image"       content="https://flowvanta.dev/assets/flowvanta-icon.png">
 <meta property="og:site_name"   content="Flowvanta">
 <meta property="og:locale"      content="en_US">
@@ -2021,40 +2021,51 @@ html.dark body::-webkit-scrollbar-thumb:hover { background:#4A3A72 }
         </div>
       </div>
 
-    </div><!-- /ta-grid -->
-
-    <!-- ── Experience credentials strip -->
-    <div class="ta-exp sr">
-      <div class="ta-exp-stats">
-        <div class="ta-exp-stat">
-          <span class="ta-exp-n">12+</span>
-          <span class="ta-exp-l">Years IT Experience</span>
+      <!-- ── Staffing Services -->
+      <div class="ta-card" style="--cc:#0EA5E9">
+        <div class="ta-card-hd">
+          <span class="ta-card-ic" style="background:linear-gradient(135deg,#0EA5E9,#6D28D9)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </span>
+          Staffing Services
         </div>
-        <div class="ta-exp-divider"></div>
-        <div class="ta-exp-stat">
-          <span class="ta-exp-n">6</span>
-          <span class="ta-exp-l">Companies Worked</span>
-        </div>
-        <div class="ta-exp-divider"></div>
-        <div class="ta-exp-stat">
-          <span class="ta-exp-n">50+</span>
-          <span class="ta-exp-l">Automations Shipped</span>
-        </div>
-        <div class="ta-exp-divider"></div>
-        <div class="ta-exp-stat">
-          <span class="ta-exp-n">8</span>
-          <span class="ta-exp-l">Industries Served</span>
+        <div class="ta-pills">
+          <span class="ta-pill"><b class="ta-bi" style="background:#EC4899;color:#fff">UX</b>UI/UX Designer</span>
+          <span class="ta-pill"><b class="ta-bi" style="background:#16A34A;color:#fff">QA</b>QA Engineer</span>
+          <span class="ta-pill"><b class="ta-bi" style="background:#15803D;color:#fff">QT</b>QA Tester</span>
+          <span class="ta-pill"><b class="ta-bi" style="background:#7C3AED;color:#fff">AR</b>Architect</span>
+          <span class="ta-pill"><b class="ta-bi" style="background:#4C1D95;color:#fff">SA</b>Senior Architect</span>
+          <span class="ta-pill"><b class="ta-bi" style="background:#2563EB;color:#fff">BA</b>Business Analyst</span>
+          <span class="ta-pill"><b class="ta-bi" style="background:#2496ED;color:#fff">DO</b>DevOps Engineer</span>
         </div>
       </div>
-      <div class="ta-exp-companies">
-        <p class="ta-exp-co-label">Enterprise &amp; MNC Background</p>
+
+    </div><!-- /ta-grid -->
+
+    <!-- ── Enterprise track record strip -->
+    <div class="ta-exp sr">
+      <div class="ta-exp-left">
+        <p class="ta-exp-co-label">Enterprise &amp; Startup Track Record</p>
         <div class="ta-exp-co-row">
           <span class="ta-co"><b class="ta-co-ic" style="background:#007CC2">iN</b>Infosys</span>
           <span class="ta-co"><b class="ta-co-ic" style="background:#1B5E8F">Cg</b>Cognizant</span>
           <span class="ta-co"><b class="ta-co-ic" style="background:#E82022">Fj</b>Fujitsu</span>
           <span class="ta-co"><b class="ta-co-ic" style="background:#D9000D">PS</b>Publicis Sapient</span>
           <span class="ta-co"><b class="ta-co-ic" style="background:#6D28D9">TD</b>Techdome</span>
-          <span class="ta-co"><b class="ta-co-ic" style="background:#0F766E">iO</b>iOPex (London)</span>
+          <span class="ta-co"><b class="ta-co-ic" style="background:#0F766E">iO</b>iOPex London</span>
+        </div>
+      </div>
+      <div class="ta-exp-right">
+        <p class="ta-exp-co-label">Industries Delivered</p>
+        <div class="ta-exp-co-row">
+          <span class="ta-co ta-co-sm">FinTech</span>
+          <span class="ta-co ta-co-sm">SaaS</span>
+          <span class="ta-co ta-co-sm">EdTech</span>
+          <span class="ta-co ta-co-sm">Healthcare</span>
+          <span class="ta-co ta-co-sm">Telecom</span>
+          <span class="ta-co ta-co-sm">E-Commerce</span>
+          <span class="ta-co ta-co-sm">Logistics</span>
+          <span class="ta-co ta-co-sm">Enterprise IT</span>
         </div>
       </div>
     </div>
@@ -2123,30 +2134,16 @@ html.dark body::-webkit-scrollbar-thumb:hover { background:#4A3A72 }
 /* ─── Experience Strip ─── */
 .ta-exp {
   background:var(--bg-dark); border-radius:var(--r-xl);
-  padding:clamp(24px,4vw,40px) clamp(24px,5vw,52px);
+  padding:clamp(28px,4vw,44px) clamp(24px,5vw,52px);
   margin-top:32px;
-  display:flex; flex-wrap:wrap; gap:36px;
+  display:flex; flex-wrap:wrap; gap:32px;
   align-items:flex-start; justify-content:space-between;
 }
-.ta-exp-stats {
-  display:flex; align-items:center; flex-wrap:wrap; gap:0;
-}
-.ta-exp-stat {
-  display:flex; flex-direction:column; gap:4px; align-items:center;
-  padding:0 22px; text-align:center;
-}
-.ta-exp-stat:first-child { padding-left:0 }
-.ta-exp-n {
-  font-size:clamp(2rem,4vw,2.8rem); font-weight:800; letter-spacing:-0.05em; line-height:1;
-  background:var(--grad-text); -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent; background-clip:text;
-}
-.ta-exp-l { font-size:0.7rem; color:rgba(255,255,255,0.45); font-weight:500; white-space:nowrap }
-.ta-exp-divider { width:1px; height:40px; background:rgba(255,255,255,0.1); flex-shrink:0 }
-.ta-exp-companies { display:flex; flex-direction:column; gap:10px }
+.ta-exp-left, .ta-exp-right { display:flex; flex-direction:column; gap:12px; flex:1; min-width:220px }
 .ta-exp-co-label {
   font-family:'JetBrains Mono',monospace; font-size:10px;
-  letter-spacing:0.16em; text-transform:uppercase; color:rgba(255,255,255,0.35);
+  letter-spacing:0.16em; text-transform:uppercase; color:rgba(255,255,255,0.38);
+  margin-bottom:2px;
 }
 .ta-exp-co-row { display:flex; flex-wrap:wrap; gap:8px }
 .ta-co {
@@ -2154,9 +2151,10 @@ html.dark body::-webkit-scrollbar-thumb:hover { background:#4A3A72 }
   padding:6px 14px 6px 6px; border-radius:100px;
   background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.1);
   font-size:0.8125rem; font-weight:600; color:rgba(255,255,255,0.8);
-  transition:background .2s;
+  transition:background .2s, border-color .2s;
 }
-.ta-co:hover { background:rgba(255,255,255,0.12) }
+.ta-co:hover { background:rgba(255,255,255,0.13); border-color:rgba(255,255,255,0.2) }
+.ta-co-sm { padding:5px 12px; font-size:0.75rem; font-weight:500; color:rgba(255,255,255,0.65) }
 .ta-co-ic {
   display:inline-flex; align-items:center; justify-content:center;
   width:22px; height:22px; border-radius:6px;
@@ -2170,24 +2168,24 @@ html.dark body::-webkit-scrollbar-thumb:hover { background:#4A3A72 }
   <div class="container">
     <div class="impact-grid sr">
       <div class="impact-cell">
-        <div class="impact-n" data-count="98">0</div>
-        <div class="impact-label">Cost Reduction</div>
-        <div class="impact-sub">From $50k+/mo team to &lt;$1k automation overhead</div>
+        <div class="impact-n" data-count="80" data-suffix="%">0</div>
+        <div class="impact-label">Manual Effort Reduced</div>
+        <div class="impact-sub">Real result delivered for a US telecom client at iOPex London</div>
       </div>
       <div class="impact-cell">
-        <div class="impact-n">&lt;5 min</div>
-        <div class="impact-label">Response Time</div>
-        <div class="impact-sub">Down from 12+ hour manual SLAs</div>
+        <div class="impact-n" data-count="95" data-suffix="%">0</div>
+        <div class="impact-label">On-Time Delivery</div>
+        <div class="impact-sub">Track record across 50+ enterprise projects and 6 companies</div>
       </div>
       <div class="impact-cell">
-        <div class="impact-n" data-count="50">0</div>
+        <div class="impact-n" data-count="50" data-suffix="+">0</div>
         <div class="impact-label">Automations Shipped</div>
-        <div class="impact-sub">Across FinTech, SaaS, EdTech &amp; more</div>
+        <div class="impact-sub">Across FinTech, SaaS, EdTech, Telecom &amp; more</div>
       </div>
       <div class="impact-cell">
-        <div class="impact-n">$0.03</div>
-        <div class="impact-label">Cost Per Email</div>
-        <div class="impact-sub">End-to-end AI triage + personalised draft</div>
+        <div class="impact-n">12+</div>
+        <div class="impact-label">Years IT Experience</div>
+        <div class="impact-sub">Infosys → Cognizant → Fujitsu → iOPex → Publicis Sapient</div>
       </div>
     </div>
   </div>
@@ -2981,11 +2979,7 @@ document.head.appendChild(style);
     });
   }, { threshold: 0.5 });
   document.querySelectorAll('[data-count]').forEach(el => obs.observe(el));
-  // fix the % suffix on impact cells
-  document.querySelectorAll('.impact-n[data-count]').forEach(el => {
-    if (el.textContent === '0') el.textContent = '0';
-    el.dataset.suffix = el.closest('.impact-cell')?.querySelector('.impact-label')?.textContent.includes('Cost') ? '%' : '+';
-  });
+  // suffix is already set via data-suffix attribute on each impact-n
 })();
 
 /* ═══════════════════════════════════════════════════════════
