@@ -471,6 +471,27 @@ a  { color:inherit; text-decoration:none }
   box-shadow:0 24px 80px rgba(13,10,30,0.12), 0 4px 24px rgba(13,10,30,0.07);
 }
 .loom-wrap iframe { position:absolute; top:0; left:0; width:100%; height:100%; border:none }
+
+/* Click-to-play video embeds */
+.vid-lazy { cursor:pointer }
+.vid-lazy img { position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; border-radius:inherit }
+.vid-play-btn {
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:64px; height:64px; border-radius:50%;
+  background:rgba(0,0,0,0.65); border:2px solid rgba(255,255,255,0.25);
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+  transition:background .2s, transform .2s, border-color .2s; z-index:2;
+}
+.vid-lazy:hover .vid-play-btn { background:rgba(109,40,217,0.9); border-color:rgba(255,255,255,0.6); transform:translate(-50%,-50%) scale(1.1) }
+.vid-play-btn svg { margin-left:4px }
+.vid-poster-loom {
+  position:absolute; inset:0; background:#1e1b2e;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px;
+  border-radius:inherit;
+}
+.vid-poster-loom span { font-size:0.8125rem; color:rgba(255,255,255,0.5); font-family:'JetBrains Mono',monospace; letter-spacing:0.06em }
+html.dark .loom-wrap { border-color:rgba(255,255,255,0.08); box-shadow:0 24px 80px rgba(0,0,0,0.45), 0 4px 24px rgba(0,0,0,0.3) }
+
 .loom-ph {
   position:absolute; inset:0; background:var(--bg-alt);
   display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px;
@@ -1720,14 +1741,9 @@ html.dark body::-webkit-scrollbar-thumb:hover { background:#4A3A72 }
       <div class="hero-video-section" style="animation:fadeUp .6s ease both .5s">
         <div class="video-eyebrow">Watch the live demo — AI Email Automation System</div>
 
-        <div class="loom-wrap">
-          <iframe
-            src="https://www.youtube.com/embed/Y3Gacl7Mby0"
-            title="Flowvanta — Intro & Overview"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen>
-          </iframe>
+        <div class="loom-wrap vid-lazy" data-src="https://www.youtube.com/embed/Y3Gacl7Mby0?autoplay=1" data-type="yt" data-vid="Y3Gacl7Mby0" title="Flowvanta — Intro & Overview">
+          <img src="https://img.youtube.com/vi/Y3Gacl7Mby0/maxresdefault.jpg" alt="Flowvanta — Intro & Overview" loading="lazy">
+          <button class="vid-play-btn" aria-label="Play video"><svg viewBox="0 0 24 24" width="28" height="28"><path fill="#fff" d="M8 5v14l11-7z"/></svg></button>
         </div>
       </div>
 
@@ -1816,14 +1832,9 @@ html.dark body::-webkit-scrollbar-thumb:hover { background:#4A3A72 }
           </div>
         </div>
         <div class="svc-vid-wrap">
-          <div class="loom-wrap">
-            <iframe
-              src="https://www.youtube.com/embed/8teylMe5rP4?start=36"
-              title="Flowvanta — AI Email Automation System Demo"
-              frameborder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowfullscreen>
-            </iframe>
+          <div class="loom-wrap vid-lazy" data-src="https://www.youtube.com/embed/8teylMe5rP4?start=36&autoplay=1" data-type="yt" data-vid="8teylMe5rP4" title="AI Email Automation System Demo">
+            <img src="https://img.youtube.com/vi/8teylMe5rP4/maxresdefault.jpg" alt="AI Email Automation System Demo" loading="lazy">
+            <button class="vid-play-btn" aria-label="Play video"><svg viewBox="0 0 24 24" width="28" height="28"><path fill="#fff" d="M8 5v14l11-7z"/></svg></button>
           </div>
         </div>
       </div>
@@ -1849,12 +1860,9 @@ html.dark body::-webkit-scrollbar-thumb:hover { background:#4A3A72 }
 
         <!-- Loom for AI demo -->
         <div class="svc-vid-wrap">
-          <div class="loom-wrap">
-            <iframe
-              src="https://www.loom.com/embed/964e8312ee524b4894c242f37c0569a4"
-              title="AI Support Triage Demo"
-              frameborder="0" allowfullscreen>
-            </iframe>
+          <div class="loom-wrap vid-lazy" data-src="https://www.loom.com/embed/964e8312ee524b4894c242f37c0569a4?autoplay=1" data-type="loom" title="AI Support Triage Demo">
+            <div class="vid-poster-loom"><svg width="36" height="36" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="18" fill="#625DF5"/><path d="M18 10.5l7.5 4.33v8.34L18 27.17l-7.5-4.33v-8.34L18 10.5z" fill="white"/></svg><span>Click to play demo</span></div>
+            <button class="vid-play-btn" aria-label="Play video"><svg viewBox="0 0 24 24" width="28" height="28"><path fill="#fff" d="M8 5v14l11-7z"/></svg></button>
           </div>
         </div>
       </div>
@@ -1878,12 +1886,9 @@ html.dark body::-webkit-scrollbar-thumb:hover { background:#4A3A72 }
         </div>
         <!-- Content Hub demo -->
         <div class="svc-vid-wrap">
-          <div class="loom-wrap">
-            <iframe
-              src="https://www.loom.com/embed/66ecf46961824a039492a377a3df0059"
-              title="AI Content Hub & Distribution Demo"
-              frameborder="0" allowfullscreen>
-            </iframe>
+          <div class="loom-wrap vid-lazy" data-src="https://www.loom.com/embed/66ecf46961824a039492a377a3df0059?autoplay=1" data-type="loom" title="AI Content Hub & Distribution Demo">
+            <div class="vid-poster-loom"><svg width="36" height="36" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="18" fill="#625DF5"/><path d="M18 10.5l7.5 4.33v8.34L18 27.17l-7.5-4.33v-8.34L18 10.5z" fill="white"/></svg><span>Click to play demo</span></div>
+            <button class="vid-play-btn" aria-label="Play video"><svg viewBox="0 0 24 24" width="28" height="28"><path fill="#fff" d="M8 5v14l11-7z"/></svg></button>
           </div>
         </div>
       </div>
@@ -2542,9 +2547,15 @@ html.dark body::-webkit-scrollbar-thumb:hover { background:#4A3A72 }
               </div>
             </div>
 
-            <div class="ff2">
-              <label for="fc">Company</label>
-              <input id="fc" name="company" type="text" placeholder="Acme Inc (optional)">
+            <div class="form-row-v2">
+              <div class="ff2">
+                <label for="fc">Company</label>
+                <input id="fc" name="company" type="text" placeholder="Acme Inc (optional)">
+              </div>
+              <div class="ff2">
+                <label for="fp">Phone Number</label>
+                <input id="fp" name="phone" type="tel" placeholder="+91 98765 43210 (optional)">
+              </div>
             </div>
 
             <div class="ff2">
@@ -3402,17 +3413,22 @@ document.head.appendChild(style);
     btn.textContent = 'Sending…';
     btn.disabled = true;
 
-    // ── WIRE TO BACKEND HERE ────────────────────────────
-    // Option A (n8n webhook):
-    // fetch('YOUR_WEBHOOK_URL', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.fromEntries(new FormData(form)))})
-    //   .then(() => showSuccess()).catch(() => showSuccess());
-    //
-    // Option B (just open mailto as fallback):
     const d = Object.fromEntries(new FormData(form));
-    const msg = `Name: ${d.name}\nEmail: ${d.email}\nCompany: ${d.company||'—'}\nService: ${d.service||'—'}\n\n${d.description}`;
-    window.open(`mailto:vivek@flowvanta.dev?subject=Blueprint Request — ${encodeURIComponent(d.name)}&body=${encodeURIComponent(msg)}`, '_blank');
-    setTimeout(showSuccess, 400);
-    // ────────────────────────────────────────────────────
+    fetch('https://formsubmit.co/ajax/vivek@flowvanta.dev', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({
+        _subject: `Blueprint Request — ${d.name}`,
+        name: d.name,
+        email: d.email,
+        phone: d.phone || '—',
+        company: d.company || '—',
+        service: d.service || '—',
+        description: d.description,
+        source: 'Flowvanta.dev — Blueprint Form',
+        _template: 'table',
+      })
+    }).catch(() => {}).finally(() => { showSuccess(); });
   });
 
   function showSuccess() {
@@ -3452,6 +3468,24 @@ document.head.appendChild(style);
       body.style.display = 'none';
       succ.style.display = 'flex';
     });
+  });
+})();
+
+/* ─── Click-to-play video embeds ─── */
+(function () {
+  document.querySelectorAll('.vid-lazy[data-src]').forEach(function (wrap) {
+    wrap.addEventListener('click', function () {
+      var iframe = document.createElement('iframe');
+      iframe.src = this.dataset.src;
+      iframe.title = this.title || 'Video';
+      iframe.frameBorder = '0';
+      iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+      iframe.allowFullscreen = true;
+      iframe.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;border:none';
+      this.innerHTML = '';
+      this.appendChild(iframe);
+      this.style.cursor = 'default';
+    }, { once: true });
   });
 })();
 
