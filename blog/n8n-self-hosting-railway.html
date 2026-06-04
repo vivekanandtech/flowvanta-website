@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>n8n Self-Hosting on Railway: Complete Setup Guide 2026 | Flowvanta</title>
+<meta name="description" content="Deploy n8n on Railway in under 20 minutes. Full guide covering environment variables, persistent storage, custom domain, SMTP, and production hardening — no DevOps experience required.">
+<link rel="canonical" href="https://flowvanta.dev/blog/n8n-self-hosting-railway">
+<link rel="icon" type="image/png" href="../assets/flowvanta-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+  :root{--purple:#6D28D9;--blue:#2563EB;--grad:linear-gradient(135deg,#6D28D9 0%,#2563EB 100%);--t1:#06020F;--t2:#4B5268;--t3:#94A3B8;--border:#E4E2F0;--bg-alt:#F5F3FF;--bg-dark:#0D0A1E;--white:#fff;--r-xl:20px;--r-md:14px}
+  body{font-family:'Plus Jakarta Sans',sans-serif;color:var(--t1);background:var(--white);-webkit-font-smoothing:antialiased;line-height:1.6}
+  a{color:inherit;text-decoration:none}
+  .container{max-width:760px;margin-inline:auto;padding-inline:clamp(20px,5vw,40px)}
+  .container-wide{max-width:1100px;margin-inline:auto;padding-inline:clamp(20px,5vw,60px)}
+  nav{background:rgba(255,255,255,0.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px 0;position:sticky;top:0;z-index:100}
+  .nav-inner{display:flex;align-items:center;justify-content:space-between}
+  .nav-logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.1rem;letter-spacing:-0.03em}
+  .nav-back{font-size:.875rem;font-weight:600;color:var(--t2);transition:color .2s}
+  .nav-back:hover{color:var(--purple)}
+  .article-hero{padding:64px 0 48px;border-bottom:1px solid var(--border)}
+  .article-tag{display:inline-flex;align-items:center;padding:4px 12px;border-radius:100px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;background:#ECFDF5;color:#065F46;border:1px solid #6EE7B7;margin-bottom:20px}
+  .article-title{font-size:clamp(1.9rem,4.5vw,3rem);font-weight:900;letter-spacing:-0.04em;line-height:1.1;color:var(--t1);margin-bottom:20px}
+  .article-meta{display:flex;flex-wrap:wrap;align-items:center;gap:16px;font-size:.8125rem;color:var(--t3);padding-bottom:28px;border-bottom:1px solid var(--border);margin-bottom:36px}
+  .meta-author{display:flex;align-items:center;gap:8px;font-weight:600;color:var(--t2)}
+  .article-body{padding-bottom:60px}
+  .article-body p{font-size:1.0625rem;color:var(--t2);line-height:1.85;margin-bottom:22px}
+  .article-body h2{font-size:1.5rem;font-weight:800;letter-spacing:-0.03em;color:var(--t1);margin:40px 0 16px}
+  .article-body h3{font-size:1.125rem;font-weight:700;color:var(--t1);margin:28px 0 12px}
+  .article-body ul,.article-body ol{padding-left:24px;margin-bottom:22px;display:flex;flex-direction:column;gap:10px}
+  .article-body li{font-size:1.0625rem;color:var(--t2);line-height:1.75}
+  .article-body strong{color:var(--t1);font-weight:700}
+  .article-body code{font-family:'JetBrains Mono',monospace;font-size:.875em;background:#F5F3FF;color:#5B21B6;padding:2px 7px;border-radius:5px;border:1px solid #DDD6FE}
+  pre{background:#0D0A1E;border-radius:var(--r-md);padding:20px 24px;margin:24px 0;overflow-x:auto}
+  pre code{background:none;border:none;color:#C4B5FD;font-size:.875rem;padding:0;line-height:1.7}
+  .callout{background:var(--bg-alt);border:1.5px solid #DDD6FE;border-radius:var(--r-md);padding:24px 28px;margin:32px 0}
+  .callout-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);font-weight:600;margin-bottom:10px}
+  .callout p{margin-bottom:0;color:var(--t1)}
+  .callout.tip{background:#F0FDF4;border-color:#BBF7D0}
+  .callout.tip .callout-label{color:#166534}
+  .callout.warning{background:#FFF7ED;border-color:#FED7AA}
+  .callout.warning .callout-label{color:#C2410C}
+  .step-card{display:flex;gap:20px;margin-bottom:28px;align-items:flex-start}
+  .step-num{width:36px;height:36px;border-radius:50%;background:var(--grad);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem;flex-shrink:0;margin-top:2px}
+  .step-content h3{margin-top:0;margin-bottom:8px}
+  .compare-table{width:100%;border-collapse:collapse;margin:24px 0;font-size:.9375rem}
+  .compare-table th{background:var(--bg-alt);padding:12px 16px;text-align:left;font-size:.8125rem;font-weight:700;color:var(--t1);border:1px solid var(--border)}
+  .compare-table td{padding:12px 16px;border:1px solid var(--border);color:var(--t2);vertical-align:top}
+  .compare-table tr:nth-child(even) td{background:#FAFAF8}
+  .nl-box{background:var(--bg-dark);border-radius:var(--r-xl);padding:clamp(32px,5vw,48px);margin:48px 0;text-align:center}
+  .nl-box h3{font-size:1.375rem;font-weight:800;color:#fff;letter-spacing:-0.03em;margin-bottom:8px}
+  .nl-box p{font-size:.9375rem;color:rgba(255,255,255,0.6);margin-bottom:24px}
+  .nl-form{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:480px;margin:0 auto}
+  .nl-input{flex:1;min-width:200px;padding:12px 16px;border-radius:10px;border:1.5px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.07);color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:.9375rem;outline:none}
+  .nl-input::placeholder{color:rgba(255,255,255,0.35)}
+  .nl-btn{padding:12px 24px;border-radius:10px;background:linear-gradient(135deg,#7C3AED,#2563EB);color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:.9375rem;font-weight:700;border:none;cursor:pointer}
+  .nl-note{font-size:.75rem;color:rgba(255,255,255,0.3);margin-top:10px}
+  .cta-strip{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;background:#F5F3FF;border:1px solid #DDD6FE;border-radius:var(--r-xl);padding:28px 32px;margin:40px 0}
+  .cta-strip-text h4{font-size:1.0625rem;font-weight:800;color:var(--t1);margin-bottom:4px}
+  .cta-strip-text p{font-size:.875rem;color:var(--t2)}
+  .btn-grad{padding:12px 24px;border-radius:10px;background:var(--grad);color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:.875rem;font-weight:700;border:none;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+  footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;color:var(--t3);font-size:.8125rem}
+  footer a{color:var(--purple)}
+</style>
+</head>
+<body>
+<nav><div class="container-wide nav-inner">
+  <a href="/" class="nav-logo">
+    <img src="../assets/flowvanta-icon.png" alt="Flowvanta" style="width:32px;height:32px;object-fit:contain">
+    Flowvanta
+  </a>
+  <a href="/blog/" class="nav-back">← All articles</a>
+</div></nav>
+
+<div class="container">
+  <article>
+    <header class="article-hero">
+      <span class="article-tag">Tutorial</span>
+      <h1 class="article-title">n8n Self-Hosting on Railway: Complete Setup Guide 2026</h1>
+      <div class="article-meta">
+        <div class="meta-author">
+          <img src="../assets/flowvanta-icon.png" alt="Flowvanta" style="width:28px;height:28px;border-radius:50%;object-fit:contain">
+          Flowvanta Engineering
+        </div>
+        <span>June 2026</span>
+        <span>8 min read</span>
+      </div>
+    </header>
+
+    <div class="article-body">
+
+      <p>n8n Cloud starts at $20/month and caps your workflow executions. Railway lets you run your own n8n instance for $5–10/month with unlimited executions, full control over your data, and no execution limits that will surprise you mid-month.</p>
+
+      <p>This guide gets you from zero to a production-ready n8n instance on Railway — with PostgreSQL persistence, a custom domain, SMTP for email nodes, and the key environment variables that most tutorials miss.</p>
+
+      <div class="callout">
+        <div class="callout-label">What you'll need</div>
+        <p>A Railway account (free tier works to start) · About 20 minutes · No command line or DevOps experience required</p>
+      </div>
+
+      <h2>Why Railway Over Other Hosting Options?</h2>
+
+      <table class="compare-table">
+        <thead>
+          <tr><th>Option</th><th>Monthly Cost</th><th>Setup Time</th><th>Execution Limits</th><th>Persistent Storage</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Railway</strong></td><td>$5–15</td><td>20 min</td><td>None</td><td>✅ PostgreSQL</td></tr>
+          <tr><td>n8n Cloud Starter</td><td>$20</td><td>2 min</td><td>2,500/month</td><td>✅ Managed</td></tr>
+          <tr><td>DigitalOcean Droplet</td><td>$6</td><td>2–3 hrs</td><td>None</td><td>Manual setup</td></tr>
+          <tr><td>Render</td><td>$7</td><td>30 min</td><td>None</td><td>Add-on cost</td></tr>
+          <tr><td>Local Docker</td><td>$0</td><td>10 min</td><td>None</td><td>✅ Local only</td></tr>
+        </tbody>
+      </table>
+
+      <p>Railway wins on the combination of price, setup speed, and first-class PostgreSQL support. It also has a genuinely good UI and deploys directly from a Docker image — no Dockerfile maintenance required.</p>
+
+      <h2>Step 1 — Create Your Railway Project</h2>
+
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h3>New project → Deploy from Docker image</h3>
+          <p>Log in to railway.app → click <strong>New Project</strong> → select <strong>Deploy from Docker image</strong>. In the image field, enter <code>n8nio/n8n</code>. Railway will pull the latest stable n8n image. Do not click Deploy yet.</p>
+        </div>
+      </div>
+
+      <h2>Step 2 — Add PostgreSQL</h2>
+
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h3>Add a database service to your project</h3>
+          <p>In your Railway project, click <strong>+ New Service</strong> → <strong>Database</strong> → <strong>PostgreSQL</strong>. Railway provisions a Postgres instance in about 30 seconds. Click on the Postgres service → <strong>Variables</strong> tab → copy the <code>DATABASE_URL</code> value. You'll need it in Step 3.</p>
+        </div>
+      </div>
+
+      <div class="callout warning">
+        <div class="callout-label">Do not skip the database</div>
+        <p>Without PostgreSQL, n8n uses SQLite stored in the container filesystem. Railway containers do not have persistent storage by default — every redeploy wipes your workflows, credentials, and execution history. PostgreSQL is non-negotiable for production.</p>
+      </div>
+
+      <h2>Step 3 — Configure Environment Variables</h2>
+
+      <p>Click on your n8n service → <strong>Variables</strong> tab → add each of these:</p>
+
+<pre><code># Database
+DB_TYPE=postgresdb
+DB_POSTGRESDB_HOST=${{ '{' }}Postgres.PGHOST}}
+DB_POSTGRESDB_PORT=${{ '{' }}Postgres.PGPORT}}
+DB_POSTGRESDB_DATABASE=${{ '{' }}Postgres.PGDATABASE}}
+DB_POSTGRESDB_USER=${{ '{' }}Postgres.PGUSER}}
+DB_POSTGRESDB_PASSWORD=${{ '{' }}Postgres.PGPASSWORD}}
+
+# n8n core settings
+N8N_HOST=your-subdomain.railway.app
+N8N_PORT=5678
+N8N_PROTOCOL=https
+WEBHOOK_URL=https://your-subdomain.railway.app/
+
+# Security
+N8N_BASIC_AUTH_ACTIVE=true
+N8N_BASIC_AUTH_USER=admin
+N8N_BASIC_AUTH_PASSWORD=change-this-to-something-strong
+
+# Encryption key (generate once, never change)
+N8N_ENCRYPTION_KEY=generate-a-32-char-random-string
+
+# Timezone
+GENERIC_TIMEZONE=Asia/Kolkata
+
+# Performance
+EXECUTIONS_DATA_MAX_AGE=336
+EXECUTIONS_DATA_PRUNE=true</code></pre>
+
+      <div class="callout tip">
+        <div class="callout-label">Pro tip: Railway variable references</div>
+        <p>Use Railway's reference syntax <code>${{'{'}Postgres.PGHOST}}</code> instead of hardcoding database values. If Railway rotates your credentials, your n8n instance updates automatically without any manual changes.</p>
+      </div>
+
+      <h3>Generate a secure encryption key</h3>
+      <p>The <code>N8N_ENCRYPTION_KEY</code> is used to encrypt all your credentials in the database. Generate it once and never change it — changing it invalidates all stored credentials. Use this command to generate a secure key:</p>
+
+<pre><code># macOS/Linux — run in terminal
+openssl rand -hex 16
+
+# Output example:
+a3f8c2d1e5b7940261f4e8d3c9a72b05</code></pre>
+
+      <h2>Step 4 — Set the Port and Deploy</h2>
+
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h3>Set PORT variable and deploy</h3>
+          <p>Add one final variable: <code>PORT=5678</code>. Railway uses the <code>PORT</code> environment variable to know which port to expose. Without it, Railway's automatic port detection may not find n8n's port. Now click <strong>Deploy</strong>.</p>
+        </div>
+      </div>
+
+      <p>Your first deploy takes 2–3 minutes as Railway pulls the Docker image and initialises the database schema. Watch the build logs — a successful start ends with:</p>
+
+<pre><code>Editor is now accessible via:
+http://localhost:5678/
+
+Press "o" to open in Browser</code></pre>
+
+      <h2>Step 5 — Add a Custom Domain</h2>
+
+      <div class="step-card">
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <h3>Generate Railway domain or add your own</h3>
+          <p>In your n8n service → <strong>Settings</strong> tab → <strong>Networking</strong> → click <strong>Generate Domain</strong> for a free <code>*.railway.app</code> URL. To use your own domain (e.g. <code>n8n.flowvanta.dev</code>), click <strong>Add Custom Domain</strong> and follow the CNAME instructions.</p>
+        </div>
+      </div>
+
+      <p>After adding your custom domain, update the environment variables:</p>
+
+<pre><code>N8N_HOST=n8n.yourdomain.com
+WEBHOOK_URL=https://n8n.yourdomain.com/</code></pre>
+
+      <p>The <code>WEBHOOK_URL</code> is critical. This is the base URL that n8n uses when generating webhook URLs for your automations. If it's wrong, webhook triggers will point to the wrong address and never fire.</p>
+
+      <h2>Step 6 — Configure SMTP for Email Nodes</h2>
+
+      <p>n8n's Gmail and Email nodes require SMTP credentials for sending. Add these variables to enable email-sending capabilities:</p>
+
+<pre><code># Gmail SMTP (requires App Password, not your account password)
+N8N_EMAIL_MODE=smtp
+N8N_SMTP_HOST=smtp.gmail.com
+N8N_SMTP_PORT=465
+N8N_SMTP_SSL=true
+N8N_SMTP_USER=your@gmail.com
+N8N_SMTP_PASS=your-gmail-app-password
+N8N_SMTP_SENDER=your@gmail.com</code></pre>
+
+      <div class="callout tip">
+        <div class="callout-label">Gmail App Passwords</div>
+        <p>To get a Gmail App Password: Google Account → Security → 2-Step Verification → App passwords → create one for "n8n". Use this 16-character password, not your Gmail login password.</p>
+      </div>
+
+      <h2>Production Hardening</h2>
+
+      <h3>Enable worker mode for heavy workflows</h3>
+      <p>If you run CPU-intensive workflows (large data transforms, many parallel executions), add <code>EXECUTIONS_PROCESS=own</code> to isolate executions in separate processes. This prevents a single slow workflow from blocking others.</p>
+
+      <h3>Set execution limits</h3>
+<pre><code># Prevent runaway workflows
+N8N_DEFAULT_BINARY_DATA_MODE=filesystem
+EXECUTIONS_DATA_MAX_AGE=336       # 2 weeks retention
+EXECUTIONS_DATA_PRUNE=true        # Auto-clean old executions
+N8N_PAYLOAD_SIZE_MAX=16           # 16MB max payload</code></pre>
+
+      <h3>Set up monitoring</h3>
+      <p>Railway has a built-in Metrics tab showing CPU, memory, and network. For production n8n monitoring, also set up the <strong>n8n Error Trigger</strong> node in a dedicated monitoring workflow — route failures to Slack or email so you know when automations break.</p>
+
+      <h3>Regular backups</h3>
+      <p>Railway's PostgreSQL plans include automated backups. For extra safety, create an n8n workflow that runs nightly to export your workflow JSON files to Google Drive using n8n's built-in export API endpoint: <code>GET /api/v1/workflows</code>.</p>
+
+      <h2>Cost Optimisation</h2>
+
+      <p>Railway bills by usage (compute + memory). A typical n8n instance for a small business uses:</p>
+      <ul>
+        <li><strong>Compute</strong> — 0.5–1 vCPU most of the time, spikes during executions</li>
+        <li><strong>Memory</strong> — 256–512MB base, 1–2GB during heavy workflows</li>
+        <li><strong>Storage</strong> — PostgreSQL grows slowly, expect 100–500MB for first year</li>
+      </ul>
+
+      <p>Expected Railway bill: <strong>$5–12/month</strong> for a typical automation workload with 1,000–10,000 executions/month. Add $5–7 for the PostgreSQL instance. Total: $10–19/month versus $20+ for n8n Cloud — with no execution limits.</p>
+
+      <div class="callout">
+        <div class="callout-label">Troubleshooting — common issues</div>
+        <p><strong>Webhooks not triggering:</strong> Check <code>WEBHOOK_URL</code> matches your actual domain exactly, including the trailing slash.<br><br>
+        <strong>Credentials lost after redeploy:</strong> You skipped the PostgreSQL setup. Add it now and run n8n's data migration.<br><br>
+        <strong>502 errors on startup:</strong> n8n takes 20–30 seconds to start. Railway's health check may fire too early. Add a startup delay in Railway service settings.</p>
+      </div>
+
+    </div>
+
+    <div class="nl-box">
+      <h3>Get the full n8n Railway template</h3>
+      <p>One-click Railway deployment template with all environment variables pre-configured. Plus weekly n8n guides from engineers who run this in production.</p>
+      <form class="nl-form" onsubmit="handleNl(event)">
+        <input type="email" class="nl-input" placeholder="you@company.com" required id="nlEmail">
+        <button type="submit" class="nl-btn">Get the template →</button>
+      </form>
+      <p class="nl-note" id="nlMsg">No spam. Unsubscribe any time.</p>
+    </div>
+
+    <div class="cta-strip">
+      <div class="cta-strip-text">
+        <h4>Need n8n deployed and configured for your business?</h4>
+        <p>We set up, secure, and maintain self-hosted n8n instances for clients. Usually done in a day.</p>
+      </div>
+      <a href="/#contact" class="btn-grad">Book a free call →</a>
+    </div>
+
+  </article>
+</div>
+
+<footer><div class="container">© 2026 <a href="/">Flowvanta.dev</a> — All rights reserved</div></footer>
+
+<script>
+function handleNl(e) {
+  e.preventDefault();
+  const email = document.getElementById('nlEmail').value;
+  fetch('https://formsubmit.co/ajax/vivek@flowvanta.dev', {
+    method:'POST', headers:{'Content-Type':'application/json',Accept:'application/json'},
+    body: JSON.stringify({_subject:'Blog subscriber — n8n Railway guide', email, source:'blog/n8n-self-hosting-railway', _template:'table'})
+  }).catch(()=>{});
+  document.getElementById('nlMsg').textContent = "✅ Template on its way!";
+  document.getElementById('nlMsg').style.color = '#6EE7B7';
+  e.target.querySelector('input').value = '';
+}
+</script>
+</body>
+</html>

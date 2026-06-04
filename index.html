@@ -574,11 +574,12 @@ html.dark .loom-wrap { border-color:rgba(255,255,255,0.08); box-shadow:0 24px 80
   background:var(--white); border:1px solid var(--border);
   border-radius:var(--r-xl); overflow:hidden;
   box-shadow:var(--shadow-sm);
+  display:flex; flex-direction:column;
   transition:transform .25s cubic-bezier(.22,1,.36,1), box-shadow .25s, border-color .25s;
 }
 .svc:hover { transform:translateY(-5px); box-shadow:var(--shadow-lg); border-color:var(--border2) }
 
-.svc-body { padding:32px 32px 24px }
+.svc-body { padding:32px 32px 24px; flex:1 }
 .svc-icon {
   width:50px; height:50px; border-radius:12px;
   display:flex; align-items:center; justify-content:center;
@@ -721,6 +722,10 @@ html.dark .loom-wrap { border-color:rgba(255,255,255,0.08); box-shadow:0 24px 80
 }
 @media (min-width:900px) { .contact-grid { grid-template-columns:1fr 1fr; gap:72px; align-items:start } }
 
+.contact-trust-pills { display:flex; flex-direction:column; gap:10px; margin-top:24px }
+.ctp-item { display:flex; align-items:flex-start; gap:10px; font-size:0.875rem; color:var(--t2); line-height:1.5 }
+.ctp-item strong { color:var(--t1) }
+.ctp-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; margin-top:5px }
 .contact-methods { display:flex; flex-direction:column; gap:14px; margin-top:28px }
 .cm-link {
   display:flex; align-items:center; gap:14px;
@@ -1025,33 +1030,54 @@ footer {
 ═══════════════════════════════════════ */
 .about-team-visual {
   background:var(--white); border:1px solid var(--border);
-  border-radius:var(--r-xl); padding:36px 28px;
+  border-radius:var(--r-xl); padding:0;
   box-shadow:var(--shadow-lg);
-  display:flex; flex-direction:column; gap:28px;
-  position:relative; overflow:hidden;
+  display:flex; flex-direction:column; gap:0;
+  position:relative; overflow:hidden; align-self:center;
 }
 .about-team-visual::before {
-  content:''; position:absolute; top:0; left:0; right:0; height:3px;
-  background:var(--grad);
+  content:''; position:absolute; top:0; left:0; right:0; height:130px;
+  background:linear-gradient(135deg,#4C1D95 0%,#1E3A8A 100%); z-index:0;
 }
 .atv-brand {
-  display:flex; flex-direction:column; align-items:center; gap:12px;
-  padding:28px 20px; background:var(--bg-alt);
-  border-radius:var(--r-lg); border:1px solid var(--border); text-align:center;
+  display:flex; flex-direction:column; align-items:center; gap:8px;
+  padding:72px 28px 24px; background:transparent;
+  border-radius:0; border:none; text-align:center; position:relative; z-index:1;
 }
-.atv-logo-mark {
-  width:72px; height:72px;
+.atv-profile-pic {
+  width:160px; height:160px; border-radius:50%;
+  overflow:hidden; margin-bottom:8px; flex-shrink:0;
+  box-shadow:0 0 0 5px var(--white), 0 6px 24px rgba(0,0,0,0.22);
+}
+.atv-profile-pic img {
+  width:160px !important; height:160px !important;
+  object-fit:cover; object-position:center top;
+  border-radius:50% !important; display:block;
+}
+.atv-brand-name { font-size:1.1875rem; font-weight:800; letter-spacing:-0.02em; color:var(--t1) }
+.atv-social-icons { display:flex; align-items:center; justify-content:center; gap:10px; margin-top:4px }
+.atv-soc {
+  width:38px; height:38px; border-radius:10px;
+  background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12);
   display:flex; align-items:center; justify-content:center;
+  transition:background .2s, transform .15s;
 }
-.atv-brand-name { font-size:1.75rem; font-weight:800; letter-spacing:-0.04em; color:var(--t1) }
+.atv-soc:hover { background:rgba(255,255,255,0.15); transform:translateY(-2px) }
+.atv-soc-n8n { background:transparent !important; border-color:transparent !important }
+.atv-soc-github img { filter:none }
+html.dark .atv-soc { background:rgba(255,255,255,0.07); border-color:rgba(255,255,255,0.1) }
+html.dark .atv-soc-github { background:rgba(255,255,255,0.9) !important }
+html.dark .atv-soc-github img { filter:none }
 .atv-brand-tagline {
   font-family:'JetBrains Mono',monospace; font-size:10.5px;
   letter-spacing:0.12em; text-transform:uppercase; color:var(--t3);
 }
 .atv-stats {
   display:grid; grid-template-columns:1fr 1fr; gap:1px;
-  background:var(--border); border-radius:var(--r-md); overflow:hidden;
+  background:var(--border); overflow:hidden;
+  border-top:1px solid var(--border);
 }
+.atv-social-icons { padding:16px 20px; margin-top:0 !important; border-top:1px solid var(--border); justify-content:center }
 .atv-stat {
   background:var(--white); padding:18px 14px;
   display:flex; flex-direction:column; gap:3px; align-items:center; text-align:center;
@@ -1326,8 +1352,8 @@ footer {
   display:none;
 }
 
-/* Hide the old inline sign-in panel — modal replaces it */
-#wfrSignin { display:none !important }
+/* wfrSignin shown/hidden by JS showPanel() */
+#wfrSignin { display:none }
 
 /* ═══════════════════════════════════════
    ANNOUNCEMENT BANNER
@@ -1494,7 +1520,8 @@ html.dark .social-link-v2 { background:var(--white); border-color:rgba(255,255,2
 html.dark .social-link-v2:hover { border-color:rgba(139,92,246,0.45); box-shadow:0 0 0 3px rgba(109,40,217,0.1) }
 
 /* ── About team */
-html.dark .atv-brand { background:var(--bg-alt); border-color:rgba(255,255,255,0.08) }
+html.dark .atv-brand { background:transparent }
+html.dark .atv-profile-pic { box-shadow:0 0 0 4px var(--white), 0 4px 20px rgba(0,0,0,0.5) }
 html.dark .atv-badge { background:rgba(255,255,255,0.05); border-color:rgba(255,255,255,0.08) }
 html.dark .atv-badge:hover { background:rgba(255,255,255,0.08) }
 html.dark .svc-icon  { background:rgba(255,255,255,0.05); border-color:rgba(255,255,255,0.08) }
@@ -1523,6 +1550,10 @@ html.dark .wfr-download-btn { background:rgba(255,255,255,0.05); border-color:rg
 html.dark .user-chip { background:var(--bg-alt); border-color:rgba(255,255,255,0.1) }
 
 /* ── Sign-in modal */
+html.dark #bpEmailOverlay > div { background:var(--bg-alt) !important }
+html.dark #bpEmailInput { background:var(--white) !important; border-color:rgba(255,255,255,0.1) !important; color:var(--t1) !important }
+html.dark #bpEmailInput::placeholder { color:var(--t3) }
+html.dark #bpEmailClose { background:rgba(255,255,255,0.08) !important; border-color:rgba(255,255,255,0.1) !important }
 html.dark .gsignin-card {
   background:var(--bg-alt);
   border-color:rgba(255,255,255,0.1);
@@ -1661,13 +1692,13 @@ html.dark body::-webkit-scrollbar-thumb:hover { background:#4A3A72 }
 
       <!-- Headline -->
       <h1 class="hero-h1" style="animation:fadeUp .6s ease both .18s">
-        We Automate the Work<br>
-        <span class="grad-text">Slowing You Down</span>
+        Stop Paying People To Do<br>
+        <span class="grad-text">What AI Can Do</span>
       </h1>
 
       <!-- Sub -->
       <p class="hero-sub" style="animation:fadeUp .6s ease both .26s">
-        Custom AI workflows, automation systems, and DevOps pipelines — built with 12+ years of engineering experience. Explain the challenge. I'll handle the rest.
+        Custom AI workflows, n8n automations, and business systems that eliminate repetitive work and scale your operations — without hiring.
       </p>
 
       <!-- Prompt + Generate Workflow -->
@@ -1691,7 +1722,7 @@ html.dark body::-webkit-scrollbar-thumb:hover { background:#4A3A72 }
           <div class="prompt-footer-v2">
             <div class="pfv2-hint">
               <span>🔒</span>
-              <span id="promptHint">Sign in to get your free automation blueprint in seconds</span>
+              <span id="promptHint">Get your free automation blueprint in seconds — no sign-in needed</span>
             </div>
             <button type="submit" class="prompt-btn-v2" id="generateBtn">
               ⚡ Generate Blueprint
@@ -1702,15 +1733,19 @@ html.dark body::-webkit-scrollbar-thumb:hover { background:#4A3A72 }
         <!-- Result panel (sign-in → loading → output) -->
         <div class="wf-result" id="wfResult">
 
-          <!-- Step A: Sign-in prompt -->
+          <!-- Step A: Email capture (replaces Google sign-in) -->
           <div class="wfr-signin" id="wfrSignin" style="display:none">
             <div style="width:40px;height:40px;margin:0 auto"><img src="assets/flowvanta-icon.png" alt="Flowvanta" style="width:40px;height:40px;object-fit:contain;display:block"></div>
-            <div class="wfr-signin-heading">One step — sign in to generate your workflow</div>
-            <div class="wfr-signin-sub">We use Google to identify you. No passwords, no forms — just your workflow.</div>
-            <button class="wfr-google-btn" id="googleSignInBtn" onclick="triggerGoogleSignIn()">
-              <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-              Continue with Google
-            </button>
+            <div class="wfr-signin-heading">One last step — where should we send your blueprint?</div>
+            <div class="wfr-signin-sub">Enter your work email and we'll generate your automation blueprint instantly.</div>
+            <form id="blueprintEmailForm" style="width:100%;display:flex;flex-direction:column;gap:10px;margin-top:4px">
+              <input type="email" id="blueprintEmail" placeholder="you@company.com" required
+                style="width:100%;padding:13px 16px;border-radius:10px;border:1.5px solid var(--border2);background:var(--bg-alt);color:var(--t1);font-size:0.9375rem;font-family:'Plus Jakarta Sans',sans-serif;outline:none;transition:border-color .2s">
+              <button type="submit" class="wfr-google-btn" style="background:linear-gradient(135deg,#7C3AED,#2563EB);border:none;color:#fff;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.9375rem;gap:8px;justify-content:center">
+                ⚡ Generate My Blueprint
+              </button>
+            </form>
+            <p style="font-size:0.75rem;color:var(--t3);text-align:center;margin-top:10px">No spam. Just your blueprint and a free follow-up from Vivek.</p>
           </div>
 
           <!-- Step B: Loading -->
@@ -1777,8 +1812,8 @@ html.dark body::-webkit-scrollbar-thumb:hover { background:#4A3A72 }
       <div class="hero-video-section" style="animation:fadeUp .6s ease both .5s">
         <div class="video-eyebrow">Watch the live demo — AI Email Automation System</div>
 
-        <div class="loom-wrap vid-lazy" data-src="https://www.youtube.com/embed/Y3Gacl7Mby0?autoplay=1" data-type="yt" data-vid="Y3Gacl7Mby0" title="Flowvanta — Intro & Overview">
-          <img src="https://img.youtube.com/vi/Y3Gacl7Mby0/maxresdefault.jpg" alt="Flowvanta — Intro & Overview" loading="lazy">
+        <div class="loom-wrap vid-lazy" data-src="https://customer-5y7p10mxhqn2m9it.cloudflarestream.com/a94b0fdf8c6cdd18b71fdc5249699374/iframe?autoplay=true" data-type="cf" title="Flowvanta — Intro & Overview">
+          <img src="https://customer-5y7p10mxhqn2m9it.cloudflarestream.com/a94b0fdf8c6cdd18b71fdc5249699374/thumbnails/thumbnail.jpg?time=&height=600" alt="Flowvanta — Intro & Overview" loading="lazy">
           <button class="vid-play-btn" aria-label="Play video"><svg viewBox="0 0 24 24" width="28" height="28"><path fill="#fff" d="M8 5v14l11-7z"/></svg></button>
         </div>
       </div>
@@ -1834,6 +1869,133 @@ html.dark body::-webkit-scrollbar-thumb:hover { background:#4A3A72 }
 .client-sector { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--t3) }
 </style>
 
+<!-- ══════════════ PROCESS TIMELINE ══════════════ -->
+<section id="process" style="padding-block:80px;background:var(--white)">
+  <div class="container">
+    <div class="sr" style="text-align:center;margin-bottom:52px">
+      <div class="sec-eye">How It Works</div>
+      <h2 class="sec-h2">What happens after <span class="grad-text">you reach out?</span></h2>
+      <p class="sec-desc" style="margin-inline:auto">No ambiguity. Here's exactly what you can expect from first contact to live automation.</p>
+    </div>
+    <div class="process-steps sr">
+      <div class="ps-step">
+        <div class="ps-num">01</div>
+        <div class="ps-connector"></div>
+        <div class="ps-body">
+          <div class="ps-icon">📞</div>
+          <div class="ps-title">Discovery Call <span class="ps-time">30 mins</span></div>
+          <p class="ps-desc">We map your current process end-to-end, identify the highest-ROI automation opportunity, and confirm it's a fit. No commitment, no sales pitch.</p>
+        </div>
+      </div>
+      <div class="ps-step">
+        <div class="ps-num">02</div>
+        <div class="ps-connector"></div>
+        <div class="ps-body">
+          <div class="ps-icon">🗺️</div>
+          <div class="ps-title">Automation Blueprint <span class="ps-time">Within 48h</span></div>
+          <p class="ps-desc">You receive a detailed solution design — tools, architecture, integrations, timeline, and fixed price. Full transparency before a single line is written.</p>
+        </div>
+      </div>
+      <div class="ps-step">
+        <div class="ps-num">03</div>
+        <div class="ps-connector"></div>
+        <div class="ps-body">
+          <div class="ps-icon">⚙️</div>
+          <div class="ps-title">Build & Deploy <span class="ps-time">1–4 weeks</span></div>
+          <p class="ps-desc">We build, test, and hand over the working system with full documentation. You approve at every milestone — no surprises at the end.</p>
+        </div>
+      </div>
+      <div class="ps-step">
+        <div class="ps-num">04</div>
+        <div class="ps-connector" style="display:none"></div>
+        <div class="ps-body">
+          <div class="ps-icon">📈</div>
+          <div class="ps-title">Support & Optimise <span class="ps-time">Ongoing</span></div>
+          <p class="ps-desc">30-day warranty on every build. Optional retainer for monitoring, improvements, and new automations as your business scales.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+.process-steps { display:grid; grid-template-columns:1fr; gap:0 }
+@media (min-width:768px) { .process-steps { grid-template-columns:repeat(4,1fr); gap:0 } }
+.ps-step { display:flex; flex-direction:column; align-items:center; text-align:center; position:relative; padding:0 12px }
+.ps-num {
+  font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700;
+  letter-spacing:0.14em; color:var(--purple); margin-bottom:16px;
+  background:var(--bg-alt); border:1.5px solid var(--border); border-radius:100px;
+  padding:4px 12px;
+}
+.ps-connector {
+  position:absolute; top:16px; left:calc(50% + 32px); right:calc(-50% + 32px);
+  height:1px; background:linear-gradient(90deg,var(--purple),var(--border));
+  opacity:0.35; display:none;
+}
+@media (min-width:768px) { .ps-connector { display:block } }
+.ps-body { display:flex; flex-direction:column; align-items:center; gap:10px; padding:24px 8px }
+.ps-icon { width:56px; height:56px; border-radius:16px; background:var(--bg-alt); border:1.5px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:24px }
+.ps-title { font-size:1.0625rem; font-weight:800; color:var(--t1); letter-spacing:-0.01em; display:flex; flex-direction:column; align-items:center; gap:6px }
+.ps-time { font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:var(--purple); background:var(--bg-alt); border:1px solid var(--border); border-radius:100px; padding:3px 10px }
+.ps-desc { font-size:0.9375rem; color:var(--t2); line-height:1.75; max-width:220px }
+html.dark .ps-icon { background:rgba(255,255,255,0.05); border-color:rgba(255,255,255,0.08) }
+html.dark .ps-num { background:rgba(255,255,255,0.04); border-color:rgba(255,255,255,0.08) }
+html.dark .ps-time { background:rgba(109,40,217,0.15); border-color:rgba(109,40,217,0.3) }
+</style>
+
+<!-- ══════════════ OUTCOMES ══════════════ -->
+<section id="outcomes" style="padding-block:80px;background:var(--bg-alt);border-top:1px solid var(--border)">
+  <div class="container">
+    <div class="sr" style="text-align:center;margin-bottom:48px">
+      <div class="sec-eye">Proven Results</div>
+      <h2 class="sec-h2">Clients don't buy automation.<br><span class="grad-text">They buy outcomes.</span></h2>
+    </div>
+    <div class="outcomes-grid sr">
+      <div class="oc-card">
+        <div class="oc-metric">98%</div>
+        <div class="oc-label">Support Cost Reduction</div>
+        <p class="oc-desc">AI email triage system replaced a 3-person support team. Every email classified, drafted, and logged in under 5 minutes — automatically.</p>
+        <div class="oc-tag">FinTech · AI Email Triage · n8n</div>
+      </div>
+      <div class="oc-card">
+        <div class="oc-metric">40 hrs</div>
+        <div class="oc-label">Saved Every Week</div>
+        <p class="oc-desc">Lead routing and CRM sync that used to require 4 people working manually. Now runs fully automated — before the team logs in each morning.</p>
+        <div class="oc-tag">SaaS · CRM Automation · HubSpot</div>
+      </div>
+      <div class="oc-card">
+        <div class="oc-metric">80%</div>
+        <div class="oc-label">Manual Effort Eliminated</div>
+        <p class="oc-desc">End-to-end workflow automation for a US telecom enterprise — replacing repetitive operational tasks across 80+ workflows with zero human intervention.</p>
+        <div class="oc-tag">Enterprise · RPA · UiPath</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+.outcomes-grid { display:grid; grid-template-columns:1fr; gap:20px }
+@media (min-width:640px) { .outcomes-grid { grid-template-columns:repeat(3,1fr) } }
+.oc-card {
+  background:var(--white); border:1.5px solid var(--border); border-radius:var(--r-xl);
+  padding:32px 28px; display:flex; flex-direction:column; gap:10px;
+  position:relative; overflow:hidden;
+  transition:transform .25s, box-shadow .25s, border-color .25s;
+}
+.oc-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--grad) }
+.oc-card:hover { transform:translateY(-4px); box-shadow:var(--shadow-md); border-color:var(--border2) }
+.oc-metric {
+  font-size:clamp(2.4rem,5vw,3.2rem); font-weight:900; letter-spacing:-0.05em; line-height:1;
+  background:var(--grad-text); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.oc-label { font-size:1.125rem; font-weight:800; color:var(--t1); letter-spacing:-0.02em }
+.oc-desc { font-size:0.9375rem; color:var(--t2); line-height:1.75; flex:1 }
+.oc-tag { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--t3) }
+html.dark .oc-card { background:rgba(255,255,255,0.03); border-color:rgba(255,255,255,0.07) }
+html.dark .oc-card:hover { border-color:rgba(139,92,246,0.45) }
+</style>
+
 <!-- ══════════════ SERVICES ══════════════ -->
 <section id="services">
   <div class="container">
@@ -1868,8 +2030,8 @@ html.dark body::-webkit-scrollbar-thumb:hover { background:#4A3A72 }
           </div>
         </div>
         <div class="svc-vid-wrap">
-          <div class="loom-wrap vid-lazy" data-src="https://www.youtube.com/embed/8teylMe5rP4?start=36&autoplay=1" data-type="yt" data-vid="8teylMe5rP4" title="AI Email Automation System Demo">
-            <img src="https://img.youtube.com/vi/8teylMe5rP4/maxresdefault.jpg" alt="AI Email Automation System Demo" loading="lazy">
+          <div class="loom-wrap vid-lazy" data-src="https://customer-5y7p10mxhqn2m9it.cloudflarestream.com/a41903c3b59cbd084504f9ddead99f23/iframe?autoplay=true" data-type="cf" title="n8n Workflow Automation Demo">
+            <img src="https://customer-5y7p10mxhqn2m9it.cloudflarestream.com/a41903c3b59cbd084504f9ddead99f23/thumbnails/thumbnail.jpg?time=&height=600" alt="n8n Workflow Automation Demo" loading="lazy">
             <button class="vid-play-btn" aria-label="Play video"><svg viewBox="0 0 24 24" width="28" height="28"><path fill="#fff" d="M8 5v14l11-7z"/></svg></button>
           </div>
         </div>
@@ -1896,16 +2058,9 @@ html.dark body::-webkit-scrollbar-thumb:hover { background:#4A3A72 }
 
         <!-- Loom for AI demo -->
         <div class="svc-vid-wrap">
-          <div class="loom-wrap vid-lazy" data-src="https://www.loom.com/embed/964e8312ee524b4894c242f37c0569a4?autoplay=1" data-type="loom" title="AI Support Triage Demo">
-            <div class="vid-poster-loom">
-              <div class="vpl-noise"></div>
-              <div class="vpl-content">
-                <div class="vpl-badge"><svg width="14" height="14" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="18" fill="#625DF5"/><path d="M18 10.5l7.5 4.33v8.34L18 27.17l-7.5-4.33v-8.34L18 10.5z" fill="white"/></svg>Loom Demo</div>
-                <div class="vpl-title">AI Support Triage — Live Demo</div>
-                <div class="vpl-sub">See how AI triages, drafts &amp; logs support emails automatically</div>
-              </div>
-              <button class="vid-play-btn vpl-play" aria-label="Play video"><svg viewBox="0 0 24 24" width="26" height="26"><path fill="#fff" d="M8 5v14l11-7z"/></svg></button>
-            </div>
+          <div class="loom-wrap vid-lazy" data-src="https://customer-5y7p10mxhqn2m9it.cloudflarestream.com/bc7ac92e5423b2ce986633b06f9b15a0/iframe?autoplay=true" data-type="cf" title="AI Support Triage Demo">
+            <img src="https://customer-5y7p10mxhqn2m9it.cloudflarestream.com/bc7ac92e5423b2ce986633b06f9b15a0/thumbnails/thumbnail.jpg?time=&height=600" alt="AI Support Triage Demo" loading="lazy">
+            <button class="vid-play-btn" aria-label="Play video"><svg viewBox="0 0 24 24" width="28" height="28"><path fill="#fff" d="M8 5v14l11-7z"/></svg></button>
           </div>
         </div>
       </div>
@@ -1929,16 +2084,9 @@ html.dark body::-webkit-scrollbar-thumb:hover { background:#4A3A72 }
         </div>
         <!-- Content Hub demo -->
         <div class="svc-vid-wrap">
-          <div class="loom-wrap vid-lazy" data-src="https://www.loom.com/embed/66ecf46961824a039492a377a3df0059?autoplay=1" data-type="loom" title="AI Content Hub & Distribution Demo">
-            <div class="vid-poster-loom">
-              <div class="vpl-noise"></div>
-              <div class="vpl-content">
-                <div class="vpl-badge"><svg width="14" height="14" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="18" fill="#625DF5"/><path d="M18 10.5l7.5 4.33v8.34L18 27.17l-7.5-4.33v-8.34L18 10.5z" fill="white"/></svg>Loom Demo</div>
-                <div class="vpl-title">AI Content Hub — Live Demo</div>
-                <div class="vpl-sub">Multi-channel content automation from a single source of truth</div>
-              </div>
-              <button class="vid-play-btn vpl-play" aria-label="Play video"><svg viewBox="0 0 24 24" width="26" height="26"><path fill="#fff" d="M8 5v14l11-7z"/></svg></button>
-            </div>
+          <div class="loom-wrap vid-lazy" data-src="https://customer-5y7p10mxhqn2m9it.cloudflarestream.com/a5d586693fccec44382888ef9b6b73d1/iframe?autoplay=true" data-type="cf" title="AI Content Hub & Distribution Demo">
+            <img src="https://customer-5y7p10mxhqn2m9it.cloudflarestream.com/a5d586693fccec44382888ef9b6b73d1/thumbnails/thumbnail.jpg?time=&height=600" alt="AI Content Hub & Distribution Demo" loading="lazy">
+            <button class="vid-play-btn" aria-label="Play video"><svg viewBox="0 0 24 24" width="28" height="28"><path fill="#fff" d="M8 5v14l11-7z"/></svg></button>
           </div>
         </div>
       </div>
@@ -1965,6 +2113,83 @@ html.dark body::-webkit-scrollbar-thumb:hover { background:#4A3A72 }
     </div><!-- /svcs-grid -->
   </div>
 </section>
+
+<!-- ══════════════ WHAT CAN BE AUTOMATED ══════════════ -->
+<section id="use-cases" style="padding-block:80px;background:var(--white)">
+  <div class="container">
+    <div class="sr" style="text-align:center;margin-bottom:48px">
+      <div class="sec-eye">Use Cases</div>
+      <h2 class="sec-h2">Is your team doing this <span class="grad-text">manually right now?</span></h2>
+      <p class="sec-desc" style="margin-inline:auto">Most teams don't realise how much can be automated. If any of these sound familiar, there's a workflow waiting to be built.</p>
+    </div>
+    <div class="uca-grid sr">
+      <div class="uca-card">
+        <div class="uca-head"><span class="uca-icon">💼</span><span class="uca-cat">Sales</span></div>
+        <ul class="uca-list">
+          <li>Lead capture &amp; routing</li>
+          <li>CRM updates from email/forms</li>
+          <li>Follow-up sequences</li>
+          <li>Proposal generation</li>
+          <li>Pipeline reporting</li>
+        </ul>
+      </div>
+      <div class="uca-card">
+        <div class="uca-head"><span class="uca-icon">🎧</span><span class="uca-cat">Support</span></div>
+        <ul class="uca-list">
+          <li>Email triage &amp; classification</li>
+          <li>AI draft replies</li>
+          <li>Ticket routing &amp; escalation</li>
+          <li>Knowledge base lookups</li>
+          <li>SLA monitoring &amp; alerts</li>
+        </ul>
+      </div>
+      <div class="uca-card">
+        <div class="uca-head"><span class="uca-icon">⚙️</span><span class="uca-cat">Operations</span></div>
+        <ul class="uca-list">
+          <li>Weekly &amp; monthly reporting</li>
+          <li>Approval workflows</li>
+          <li>Employee onboarding</li>
+          <li>Data sync between tools</li>
+          <li>Slack/Teams notifications</li>
+        </ul>
+      </div>
+      <div class="uca-card">
+        <div class="uca-head"><span class="uca-icon">💰</span><span class="uca-cat">Finance</span></div>
+        <ul class="uca-list">
+          <li>Invoice processing</li>
+          <li>Payment reconciliation</li>
+          <li>Expense categorisation</li>
+          <li>Payment reminders</li>
+          <li>Financial report generation</li>
+        </ul>
+      </div>
+    </div>
+    <div class="sr" style="text-align:center;margin-top:40px">
+      <p style="font-size:0.9375rem;color:var(--t2);margin-bottom:20px">Don't see your use case? We've automated processes in 8+ industries.</p>
+      <a href="#contact" class="btn-grad" style="display:inline-flex;align-items:center;gap:8px;padding:13px 28px;border-radius:12px;background:var(--grad);color:#fff;font-weight:700;font-size:0.9375rem;text-decoration:none">Let's talk about your process →</a>
+    </div>
+  </div>
+</section>
+
+<style>
+.uca-grid { display:grid; grid-template-columns:1fr; gap:20px }
+@media (min-width:580px) { .uca-grid { grid-template-columns:repeat(2,1fr) } }
+@media (min-width:1000px) { .uca-grid { grid-template-columns:repeat(4,1fr) } }
+.uca-card {
+  background:var(--bg-alt); border:1.5px solid var(--border); border-radius:var(--r-xl);
+  padding:24px 22px; display:flex; flex-direction:column; gap:16px;
+  transition:transform .2s, box-shadow .2s, border-color .2s;
+}
+.uca-card:hover { transform:translateY(-3px); box-shadow:var(--shadow-md); border-color:var(--border2) }
+.uca-head { display:flex; align-items:center; gap:10px }
+.uca-icon { font-size:22px }
+.uca-cat { font-size:1.0625rem; font-weight:800; color:var(--t1); letter-spacing:-0.01em }
+.uca-list { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:10px }
+.uca-list li { font-size:0.9375rem; color:var(--t2); line-height:1.5; padding-left:18px; position:relative }
+.uca-list li::before { content:'→'; position:absolute; left:0; color:var(--purple); font-size:11px; top:2px }
+html.dark .uca-card { background:rgba(255,255,255,0.03); border-color:rgba(255,255,255,0.07) }
+html.dark .uca-card:hover { border-color:rgba(139,92,246,0.4) }
+</style>
 
 <!-- ══════════════ TECH ARSENAL ══════════════ -->
 <section id="tech-arsenal">
@@ -2085,13 +2310,14 @@ html.dark body::-webkit-scrollbar-thumb:hover { background:#4A3A72 }
           Staffing Services
         </div>
         <div class="ta-pills">
+          <span class="ta-pill"><b class="ta-bi" style="background:#0F766E;color:#fff">PM</b>Project/Product Manager</span>
+          <span class="ta-pill"><b class="ta-bi" style="background:#4C1D95;color:#fff">TA</b>Technical Architect</span>
+          <span class="ta-pill"><b class="ta-bi" style="background:#2496ED;color:#fff">DO</b>DevOps Engineer</span>
+          <span class="ta-pill"><b class="ta-bi" style="background:#2563EB;color:#fff">BA</b>Business Analyst</span>
           <span class="ta-pill"><b class="ta-bi" style="background:#EC4899;color:#fff">UX</b>UI/UX Designer</span>
           <span class="ta-pill"><b class="ta-bi" style="background:#16A34A;color:#fff">QA</b>QA Engineer</span>
-          <span class="ta-pill"><b class="ta-bi" style="background:#15803D;color:#fff">QT</b>QA Tester</span>
-          <span class="ta-pill"><b class="ta-bi" style="background:#7C3AED;color:#fff">AR</b>Architect</span>
-          <span class="ta-pill"><b class="ta-bi" style="background:#4C1D95;color:#fff">SA</b>Senior Architect</span>
-          <span class="ta-pill"><b class="ta-bi" style="background:#2563EB;color:#fff">BA</b>Business Analyst</span>
-          <span class="ta-pill"><b class="ta-bi" style="background:#2496ED;color:#fff">DO</b>DevOps Engineer</span>
+          <span class="ta-pill"><b class="ta-bi" style="background:#B45309;color:#fff">CO</b>Consultant</span>
+          <span class="ta-pill"><b class="ta-bi" style="background:#DB2777;color:#fff">HR</b>HR Services</span>
         </div>
       </div>
 
@@ -2106,7 +2332,6 @@ html.dark body::-webkit-scrollbar-thumb:hover { background:#4A3A72 }
           <span class="ta-co"><b class="ta-co-ic" style="background:#1B5E8F">Cg</b>Cognizant</span>
           <span class="ta-co"><b class="ta-co-ic" style="background:#E82022">Fj</b>Fujitsu</span>
           <span class="ta-co"><b class="ta-co-ic" style="background:#D9000D">PS</b>Publicis Sapient</span>
-          <span class="ta-co"><b class="ta-co-ic" style="background:#6D28D9">TD</b>Techdome</span>
           <span class="ta-co"><b class="ta-co-ic" style="background:#0F766E">iO</b>iOPex London</span>
         </div>
       </div>
@@ -2218,6 +2443,54 @@ html.dark body::-webkit-scrollbar-thumb:hover { background:#4A3A72 }
 }
 </style>
 
+<!-- ══════════════ WHO IS THIS FOR ══════════════ -->
+<section id="for-who" style="padding-block:80px;background:var(--bg-alt);border-top:1px solid var(--border)">
+  <div class="container">
+    <div class="fw-inner sr">
+      <div class="fw-left">
+        <div class="sec-eye">Perfect For</div>
+        <h2 class="sec-h2" style="margin-bottom:16px">Do you recognise <span class="grad-text">yourself here?</span></h2>
+        <p style="font-size:1rem;color:var(--t2);line-height:1.75;max-width:400px">
+          We work best with teams that are already feeling the pain of manual work and are ready to invest in a permanent fix — not a band-aid.
+        </p>
+        <a href="#contact" class="btn-grad" style="margin-top:28px;display:inline-flex;align-items:center;gap:8px;padding:13px 28px;border-radius:12px;background:var(--grad);color:#fff;font-weight:700;font-size:0.9375rem;text-decoration:none">That's us — let's talk →</a>
+      </div>
+      <div class="fw-right">
+        <div class="fw-grid">
+          <div class="fw-item"><span class="fw-check">✓</span><div><strong>Agencies</strong> drowning in client reporting and manual handoffs</div></div>
+          <div class="fw-item"><span class="fw-check">✓</span><div><strong>SaaS companies</strong> with repetitive onboarding or support workflows</div></div>
+          <div class="fw-item"><span class="fw-check">✓</span><div><strong>Operations teams</strong> spending hours on data entry and approvals</div></div>
+          <div class="fw-item"><span class="fw-check">✓</span><div><strong>Founders &amp; solopreneurs</strong> doing everything manually and need to scale</div></div>
+          <div class="fw-item"><span class="fw-check">✓</span><div><strong>Customer support teams</strong> buried in email and ticket volume</div></div>
+          <div class="fw-item"><span class="fw-check">✓</span><div><strong>Finance &amp; ops teams</strong> reconciling data manually across multiple tools</div></div>
+          <div class="fw-item fw-x"><span class="fw-cross">✗</span><div style="color:var(--t3)">Not a fit: businesses looking for a cheap one-click tool rather than a custom-built system</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+.fw-inner { display:grid; grid-template-columns:1fr; gap:48px; align-items:center }
+@media (min-width:860px) { .fw-inner { grid-template-columns:1fr 1.4fr } }
+.fw-grid { display:flex; flex-direction:column; gap:14px }
+.fw-item { display:flex; align-items:flex-start; gap:12px; font-size:1rem; color:var(--t2); line-height:1.65 }
+.fw-item strong { color:var(--t1) }
+.fw-check {
+  width:26px; height:26px; border-radius:8px; flex-shrink:0;
+  background:rgba(16,185,129,0.12); border:1.5px solid rgba(16,185,129,0.3);
+  color:#10B981; font-size:13px; font-weight:700;
+  display:flex; align-items:center; justify-content:center; margin-top:1px;
+}
+.fw-cross {
+  width:26px; height:26px; border-radius:8px; flex-shrink:0;
+  background:rgba(239,68,68,0.08); border:1.5px solid rgba(239,68,68,0.2);
+  color:#EF4444; font-size:13px; font-weight:700;
+  display:flex; align-items:center; justify-content:center; margin-top:1px;
+}
+.fw-x { opacity:0.7 }
+</style>
+
 <!-- ══════════════ IMPACT ══════════════ -->
 <section id="impact">
   <div class="container">
@@ -2245,6 +2518,75 @@ html.dark body::-webkit-scrollbar-thumb:hover { background:#4A3A72 }
     </div>
   </div>
 </section>
+
+<!-- ══════════════ ROI CALCULATOR ══════════════ -->
+<section id="roi-calc" style="padding-block:80px;background:var(--white);border-top:1px solid var(--border)">
+  <div class="container">
+    <div class="sr" style="text-align:center;margin-bottom:48px">
+      <div class="sec-eye">ROI Calculator</div>
+      <h2 class="sec-h2">How much is manual work <span class="grad-text">costing you?</span></h2>
+      <p class="sec-desc" style="margin-inline:auto">Most teams are surprised by the number. Calculate your annual cost of doing it manually.</p>
+    </div>
+    <div class="roi-wrap sr">
+      <div class="roi-inputs">
+        <div class="roi-field">
+          <label class="roi-label">Hours your team spends on repetitive work per week</label>
+          <div class="roi-slider-row">
+            <input type="range" id="roiHours" min="2" max="80" value="20" step="2" class="roi-slider">
+            <span class="roi-val" id="roiHoursVal">20 hrs</span>
+          </div>
+        </div>
+        <div class="roi-field">
+          <label class="roi-label">Average hourly cost per person (salary ÷ 2080)</label>
+          <div class="roi-slider-row">
+            <input type="range" id="roiRate" min="5" max="100" value="25" step="5" class="roi-slider">
+            <span class="roi-val" id="roiRateVal">$25/hr</span>
+          </div>
+        </div>
+        <div class="roi-field">
+          <label class="roi-label">Number of people doing this work</label>
+          <div class="roi-slider-row">
+            <input type="range" id="roiPeople" min="1" max="20" value="2" step="1" class="roi-slider">
+            <span class="roi-val" id="roiPeopleVal">2 people</span>
+          </div>
+        </div>
+      </div>
+      <div class="roi-result">
+        <div class="roi-result-inner">
+          <div class="roi-result-label">Annual cost of doing it manually</div>
+          <div class="roi-result-num" id="roiAnnual">$52,000</div>
+          <div class="roi-result-sub" id="roiWeekly">$1,000/week · 40 hrs wasted</div>
+          <div class="roi-divider"></div>
+          <div class="roi-result-label" style="color:rgba(255,255,255,0.5)">Typical automation investment</div>
+          <div class="roi-payback" id="roiPayback">Pays for itself in &lt;6 weeks</div>
+          <a href="#contact" class="btn-grad" style="margin-top:20px;display:inline-flex;align-items:center;gap:8px;padding:13px 28px;border-radius:12px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);color:#fff;font-weight:700;font-size:0.9375rem;text-decoration:none;backdrop-filter:blur(4px)">Let's automate it →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+.roi-wrap { display:grid; grid-template-columns:1fr; gap:28px; align-items:stretch }
+@media (min-width:860px) { .roi-wrap { grid-template-columns:1.2fr 1fr } }
+.roi-inputs { display:flex; flex-direction:column; gap:28px; padding:36px; background:var(--bg-alt); border:1.5px solid var(--border); border-radius:var(--r-xl) }
+.roi-field { display:flex; flex-direction:column; gap:10px }
+.roi-label { font-size:1rem; font-weight:600; color:var(--t2) }
+.roi-slider-row { display:flex; align-items:center; gap:16px }
+.roi-slider { flex:1; -webkit-appearance:none; appearance:none; height:4px; border-radius:4px; background:var(--border2); outline:none; cursor:pointer }
+.roi-slider::-webkit-slider-thumb { -webkit-appearance:none; width:20px; height:20px; border-radius:50%; background:var(--grad); border:3px solid var(--white); box-shadow:0 2px 8px rgba(109,40,217,0.4); cursor:pointer }
+.roi-val { font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:700; color:var(--purple); min-width:72px; text-align:right }
+.roi-result { border-radius:var(--r-xl); background:linear-gradient(135deg,#4C1D95 0%,#1E3A8A 100%); overflow:hidden; position:relative }
+.roi-result::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(139,92,246,0.4),transparent) }
+.roi-result-inner { position:relative; padding:clamp(28px,4vw,44px); display:flex; flex-direction:column; align-items:center; text-align:center; height:100%; justify-content:center; gap:8px }
+.roi-result-label { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.14em; text-transform:uppercase; color:rgba(255,255,255,0.5) }
+.roi-result-num { font-size:clamp(2.8rem,6vw,4rem); font-weight:900; letter-spacing:-0.05em; color:#fff; line-height:1 }
+.roi-result-sub { font-size:0.875rem; color:rgba(255,255,255,0.55) }
+.roi-divider { width:60px; height:1px; background:rgba(255,255,255,0.15); margin:8px 0 }
+.roi-payback { font-size:1rem; font-weight:700; color:#A78BFA }
+html.dark .roi-inputs { background:rgba(255,255,255,0.03); border-color:rgba(255,255,255,0.07) }
+html.dark .roi-slider { background:rgba(255,255,255,0.1) }
+</style>
 
 <!-- ══════════════ TESTIMONIALS ══════════════ -->
 <section id="reviews" style="padding-block:100px;background:var(--bg-alt)">
@@ -2386,6 +2728,23 @@ html.dark body::-webkit-scrollbar-thumb:hover { background:#4A3A72 }
   </div><!-- /tscroll-outer -->
 </section>
 
+<!-- ══ CTA STRIP after testimonials ══ -->
+<section style="padding-block:60px;background:var(--white);border-top:1px solid var(--border)">
+  <div class="container">
+    <div class="cta-mid-strip sr">
+      <div>
+        <h3 style="font-size:clamp(1.2rem,3vw,1.6rem);font-weight:900;letter-spacing:-0.03em;color:var(--t1);margin-bottom:8px">Ready to eliminate your team's biggest time sink?</h3>
+        <p style="font-size:0.9375rem;color:var(--t2)">Book a free 30-minute call. We'll find your highest-ROI automation — no commitment.</p>
+      </div>
+      <a href="#contact" class="btn-grad" style="display:inline-flex;align-items:center;gap:8px;padding:14px 32px;border-radius:12px;background:var(--grad);color:#fff;font-weight:700;font-size:1rem;text-decoration:none;white-space:nowrap;flex-shrink:0">Book Free Call →</a>
+    </div>
+  </div>
+</section>
+<style>
+.cta-mid-strip { display:flex; flex-wrap:wrap; gap:24px; align-items:center; justify-content:space-between; padding:36px 40px; background:var(--bg-alt); border:1.5px solid var(--border); border-radius:var(--r-xl) }
+html.dark .cta-mid-strip { background:rgba(255,255,255,0.03); border-color:rgba(255,255,255,0.07) }
+</style>
+
 <!-- ══════════════ ABOUT ══════════════ -->
 <section id="about">
   <div class="container">
@@ -2394,11 +2753,11 @@ html.dark body::-webkit-scrollbar-thumb:hover { background:#4A3A72 }
       <!-- Team Visual -->
       <div class="about-team-visual sr">
 
-        <!-- Brand mark -->
+        <!-- Profile -->
         <div class="atv-brand">
-          <div class="atv-logo-mark"><img src="assets/flowvanta-icon.png" alt="Flowvanta" style="width:44px;height:44px;object-fit:contain;display:block"></div>
-          <div class="atv-brand-name">Flowvanta</div>
-          <div class="atv-brand-tagline">Enterprise Automation &amp; AI Team</div>
+          <div class="atv-profile-pic"><img src="assets/Vivek-Profile.png" alt="Vivek Malakar"></div>
+          <div class="atv-brand-name">Vivek Malakar</div>
+          <div class="atv-brand-tagline">AI Automation &amp; DevOps Specialist</div>
         </div>
 
         <!-- Stats grid -->
@@ -2421,20 +2780,20 @@ html.dark body::-webkit-scrollbar-thumb:hover { background:#4A3A72 }
           </div>
         </div>
 
-        <!-- Credential badges -->
-        <div class="atv-badges">
-          <div class="atv-badge">
-            <span class="atv-badge-icon">⚡</span>
-            <span>n8n Verified Creator — Globally Recognised</span>
-          </div>
-          <div class="atv-badge">
-            <span class="atv-badge-icon">⭐</span>
-            <span>Upwork Top Rated — 100% Job Success</span>
-          </div>
-          <div class="atv-badge">
-            <span class="atv-badge-icon">🏢</span>
-            <span>Infosys · Cognizant · Fujitsu · Publicis Sapient</span>
-          </div>
+        <!-- Social icon links -->
+        <div class="atv-social-icons">
+          <a href="https://www.linkedin.com/in/vivekanandtech/" target="_blank" rel="noopener" class="atv-soc" title="LinkedIn">
+            <img src="assets/Linkedinicon.png" alt="LinkedIn" style="width:22px;height:22px;object-fit:contain">
+          </a>
+          <a href="https://www.upwork.com/freelancers/~014200b37321558512" target="_blank" rel="noopener" class="atv-soc" title="Upwork">
+            <img src="assets/upworkicon.png" alt="Upwork" style="width:22px;height:22px;object-fit:contain">
+          </a>
+          <a href="https://github.com/vivekanandtech/" target="_blank" rel="noopener" class="atv-soc atv-soc-github" title="GitHub">
+            <img src="assets/githubicon.png" alt="GitHub" style="width:22px;height:22px;object-fit:contain">
+          </a>
+          <a href="https://n8n.io/creators/vivek120819/" target="_blank" rel="noopener" class="atv-soc atv-soc-n8n" title="n8n Creator">
+            <img src="assets/n8n-icon.png" alt="n8n" style="width:26px;height:26px;object-fit:contain">
+          </a>
         </div>
 
       </div>
@@ -2510,7 +2869,9 @@ html.dark body::-webkit-scrollbar-thumb:hover { background:#4A3A72 }
           </a>
 
           <a href="https://n8n.io/creators/vivek120819/" target="_blank" rel="noopener" class="social-link-v2">
-            <div class="slv2-icon" style="background:linear-gradient(135deg,#FF6D5A,#E84545)">n8</div>
+            <div class="slv2-icon" style="background:#1a1a1a;display:flex;align-items:center;justify-content:center">
+              <img src="assets/n8n-icon.png" alt="n8n" style="width:28px;height:28px;object-fit:contain">
+            </div>
             <div class="slv2-info">
               <div class="slv2-name">n8n Creator Profile</div>
               <div class="slv2-sub">Published workflows &amp; templates</div>
@@ -2545,6 +2906,21 @@ html.dark body::-webkit-scrollbar-thumb:hover { background:#4A3A72 }
           Book a free 30-minute blueprint call. We'll map your highest-ROI automation opportunity and scope the build — no commitment, no sales pitch.
         </p>
 
+        <div class="contact-trust-pills">
+          <div class="ctp-item">
+            <span class="ctp-dot" style="background:#10B981"></span>
+            <span>Currently accepting <strong>3 new projects</strong> this month</span>
+          </div>
+          <div class="ctp-item">
+            <span class="ctp-dot" style="background:#6D28D9"></span>
+            <span>Average project start time: <strong>2–3 weeks</strong></span>
+          </div>
+          <div class="ctp-item">
+            <span class="ctp-dot" style="background:#2563EB"></span>
+            <span>If we can't find an automation opportunity, <strong>we'll tell you honestly</strong></span>
+          </div>
+        </div>
+
         <div class="contact-methods">
           <a href="mailto:vivek@flowvanta.dev" class="cm-link">
             <div class="cm-ic">✉️</div>
@@ -2554,17 +2930,21 @@ html.dark body::-webkit-scrollbar-thumb:hover { background:#4A3A72 }
             </div>
           </a>
           <a href="https://www.linkedin.com/in/vivekanandtech/" target="_blank" rel="noopener" class="cm-link">
-            <div class="cm-ic" style="font-size:14px;font-weight:700;color:#0A66C2">in</div>
+            <div class="cm-ic" style="padding:0;overflow:hidden;background:none;border:none">
+              <img src="assets/Linkedinicon.png" alt="LinkedIn" style="width:36px;height:36px;object-fit:contain;display:block">
+            </div>
             <div>
               <div class="cm-label">LinkedIn</div>
-              <div class="cm-val">linkedin.com/in/vivekanandtech</div>
+              <div class="cm-val">Connect with Vivek</div>
             </div>
           </a>
           <a href="https://www.upwork.com/freelancers/~014200b37321558512" target="_blank" rel="noopener" class="cm-link">
-            <div class="cm-ic" style="font-size:13px;font-weight:700;color:#6fda44">U</div>
+            <div class="cm-ic" style="padding:0;overflow:hidden;background:none;border:none">
+              <img src="assets/upworkicon.png" alt="Upwork" style="width:36px;height:36px;object-fit:contain;display:block">
+            </div>
             <div>
               <div class="cm-label">Upwork</div>
-              <div class="cm-val">Hire on Upwork — Top Rated</div>
+              <div class="cm-val">Top Rated · 100% Job Success</div>
             </div>
           </a>
         </div>
@@ -2860,6 +3240,25 @@ html.dark body::-webkit-scrollbar-thumb:hover { background:#4A3A72 }
     </div>
   </div>
 </footer>
+
+<!-- ══════════════ BLUEPRINT EMAIL MODAL ══════════════ -->
+<div id="bpEmailOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65);backdrop-filter:blur(6px);z-index:2100;align-items:center;justify-content:center;padding:20px">
+  <div style="background:var(--white);border-radius:24px;padding:44px 40px;max-width:440px;width:100%;position:relative;box-shadow:0 32px 80px rgba(0,0,0,0.35);text-align:center">
+    <button id="bpEmailClose" aria-label="Close" style="position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;background:var(--bg-alt);border:1px solid var(--border);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--t2)">✕</button>
+    <div style="width:56px;height:56px;border-radius:16px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 20px">⚡</div>
+    <h3 style="font-size:1.375rem;font-weight:900;letter-spacing:-0.03em;color:var(--t1);margin-bottom:8px">Almost there!</h3>
+    <p style="font-size:0.9375rem;color:var(--t2);line-height:1.6;margin-bottom:8px">Where should we send your automation blueprint?</p>
+    <div id="bpemPreview" style="display:none;font-size:0.8125rem;color:var(--t3);font-family:'JetBrains Mono',monospace;background:var(--bg-alt);border-radius:8px;padding:8px 12px;margin-bottom:16px;line-height:1.5"></div>
+    <form id="bpEmailForm" style="display:flex;flex-direction:column;gap:10px;margin-top:20px">
+      <input type="email" id="bpEmailInput" placeholder="you@company.com" required
+        style="width:100%;padding:14px 16px;border-radius:12px;border:1.5px solid var(--border2);background:var(--bg-alt);color:var(--t1);font-size:1rem;font-family:'Plus Jakarta Sans',sans-serif;outline:none;transition:border-color .2s;text-align:center">
+      <button type="submit" style="width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,#7C3AED,#2563EB);color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:1rem;font-weight:700;border:none;cursor:pointer;transition:opacity .2s">
+        ⚡ Generate My Blueprint
+      </button>
+    </form>
+    <p style="font-size:0.75rem;color:var(--t3);margin-top:14px">No spam. Just your blueprint and a follow-up from Vivek.</p>
+  </div>
+</div>
 
 <!-- ══════════════ GOOGLE SIGN-IN MODAL ══════════════ -->
 <div class="gsignin-overlay hidden" id="gsigninOverlay" role="dialog" aria-modal="true" aria-labelledby="gsigninTitle">
@@ -3241,6 +3640,42 @@ document.head.appendChild(style);
   const input = document.getElementById('promptInput');
   const hint  = document.getElementById('promptHint');
 
+  // ── Email modal helpers
+  const bpOverlay = document.getElementById('bpEmailOverlay');
+  const bpClose   = document.getElementById('bpEmailClose');
+  const bpPreview = document.getElementById('bpemPreview');
+
+  function openBpModal(prompt) {
+    if (bpPreview) {
+      const t = prompt.length > 80 ? prompt.slice(0, 80) + '…' : prompt;
+      bpPreview.textContent = '"' + t + '"';
+      bpPreview.style.display = 'block';
+    }
+    bpOverlay.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => document.getElementById('bpEmailInput')?.focus(), 80);
+  }
+
+  function closeBpModal() {
+    bpOverlay.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  if (bpClose) bpClose.addEventListener('click', closeBpModal);
+  bpOverlay?.addEventListener('click', e => { if (e.target === bpOverlay) closeBpModal(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeBpModal(); });
+
+  // ── Blueprint email form submit (modal)
+  document.getElementById('bpEmailForm')?.addEventListener('submit', e => {
+    e.preventDefault();
+    const email = document.getElementById('bpEmailInput').value.trim();
+    if (!email) return;
+    currentUser = { email, name: email.split('@')[0] };
+    sendInquiryEmail(currentUser, pendingPrompt);
+    closeBpModal();
+    runGeneration(pendingPrompt);
+  });
+
   form.addEventListener('submit', e => {
     e.preventDefault();
     const val = input.value.trim();
@@ -3250,12 +3685,21 @@ document.head.appendChild(style);
       return;
     }
     pendingPrompt = val;
-
     if (currentUser) {
       runGeneration(val);
     } else {
-      openSignInModal(val);
+      openBpModal(val);
     }
+  });
+
+  // ── Legacy inline email form (kept for compat, no longer shown)
+  document.getElementById('blueprintEmailForm')?.addEventListener('submit', e => {
+    e.preventDefault();
+    const email = document.getElementById('blueprintEmail').value.trim();
+    if (!email) return;
+    currentUser = { email, name: email.split('@')[0] };
+    sendInquiryEmail(currentUser, pendingPrompt);
+    runGeneration(pendingPrompt);
   });
 
   // ── Panel helpers
@@ -3299,9 +3743,15 @@ document.head.appendChild(style);
       showPanel('output');
     } catch (err) {
       clearInterval(ticker);
-      console.error('Blueprint generation error:', err.message);
-      // Show error message in the result panel
-      showApiError(err.message);
+      console.warn('AI Worker unavailable, using local blueprint:', err.message);
+      // Graceful fallback — always show a useful blueprint
+      try {
+        const wf = fallbackWorkflow(prompt);
+        renderOutput(wf, prompt, currentUser);
+        showPanel('output');
+      } catch (fallbackErr) {
+        showApiError(err.message);
+      }
     }
   }
 
@@ -3519,6 +3969,36 @@ document.head.appendChild(style);
       succ.style.display = 'flex';
     });
   });
+})();
+
+/* ─── ROI Calculator ─── */
+(function () {
+  const hours  = document.getElementById('roiHours');
+  const rate   = document.getElementById('roiRate');
+  const people = document.getElementById('roiPeople');
+  if (!hours || !rate || !people) return;
+
+  function fmt(n) {
+    if (n >= 1000000) return '$' + (n/1000000).toFixed(1) + 'M';
+    if (n >= 1000)    return '$' + Math.round(n/1000) + 'k';
+    return '$' + n;
+  }
+  function calc() {
+    const h = +hours.value, r = +rate.value, p = +people.value;
+    const weekly  = h * r * p;
+    const annual  = weekly * 52;
+    const startCost = Math.min(annual * 0.15, 5000); // rough floor
+    const weeksPayback = Math.ceil(startCost / weekly);
+
+    document.getElementById('roiHoursVal').textContent  = h + ' hrs';
+    document.getElementById('roiRateVal').textContent   = '$' + r + '/hr';
+    document.getElementById('roiPeopleVal').textContent = p + (p === 1 ? ' person' : ' people');
+    document.getElementById('roiAnnual').textContent    = fmt(annual);
+    document.getElementById('roiWeekly').textContent    = fmt(weekly) + '/week · ' + (h * p) + ' hrs wasted';
+    document.getElementById('roiPayback').textContent   = 'Pays for itself in <' + weeksPayback + ' week' + (weeksPayback !== 1 ? 's' : '');
+  }
+  [hours, rate, people].forEach(el => el.addEventListener('input', calc));
+  calc();
 })();
 
 /* ─── Click-to-play video embeds ─── */

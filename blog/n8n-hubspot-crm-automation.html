@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How to Automate Your Sales CRM with n8n and HubSpot | Flowvanta</title>
+<meta name="description" content="Step-by-step guide to connecting n8n with HubSpot: auto-create contacts, score leads, trigger follow-up sequences, and sync data across your sales stack — no code required.">
+<link rel="canonical" href="https://flowvanta.dev/blog/n8n-hubspot-crm-automation">
+<link rel="icon" type="image/png" href="../assets/flowvanta-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+  :root{--purple:#6D28D9;--blue:#2563EB;--grad:linear-gradient(135deg,#6D28D9 0%,#2563EB 100%);--t1:#06020F;--t2:#4B5268;--t3:#94A3B8;--border:#E4E2F0;--bg-alt:#F5F3FF;--bg-dark:#0D0A1E;--white:#fff;--r-xl:20px;--r-md:14px}
+  body{font-family:'Plus Jakarta Sans',sans-serif;color:var(--t1);background:var(--white);-webkit-font-smoothing:antialiased;line-height:1.6}
+  a{color:inherit;text-decoration:none}
+  .container{max-width:760px;margin-inline:auto;padding-inline:clamp(20px,5vw,40px)}
+  .container-wide{max-width:1100px;margin-inline:auto;padding-inline:clamp(20px,5vw,60px)}
+  nav{background:rgba(255,255,255,0.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px 0;position:sticky;top:0;z-index:100}
+  .nav-inner{display:flex;align-items:center;justify-content:space-between}
+  .nav-logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.1rem;letter-spacing:-0.03em}
+  .nav-back{font-size:.875rem;font-weight:600;color:var(--t2);transition:color .2s}
+  .nav-back:hover{color:var(--purple)}
+  .article-hero{padding:64px 0 48px;border-bottom:1px solid var(--border)}
+  .article-tag{display:inline-flex;align-items:center;padding:4px 12px;border-radius:100px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;background:#EFF6FF;color:#1E40AF;border:1px solid #BFDBFE;margin-bottom:20px}
+  .article-title{font-size:clamp(1.9rem,4.5vw,3rem);font-weight:900;letter-spacing:-0.04em;line-height:1.1;color:var(--t1);margin-bottom:20px}
+  .article-meta{display:flex;flex-wrap:wrap;align-items:center;gap:16px;font-size:.8125rem;color:var(--t3);padding-bottom:28px;border-bottom:1px solid var(--border);margin-bottom:36px}
+  .meta-author{display:flex;align-items:center;gap:8px;font-weight:600;color:var(--t2)}
+  .article-body{padding-bottom:60px}
+  .article-body p{font-size:1.0625rem;color:var(--t2);line-height:1.85;margin-bottom:22px}
+  .article-body h2{font-size:1.5rem;font-weight:800;letter-spacing:-0.03em;color:var(--t1);margin:40px 0 16px}
+  .article-body h3{font-size:1.125rem;font-weight:700;color:var(--t1);margin:28px 0 12px}
+  .article-body ul,.article-body ol{padding-left:24px;margin-bottom:22px;display:flex;flex-direction:column;gap:10px}
+  .article-body li{font-size:1.0625rem;color:var(--t2);line-height:1.75}
+  .article-body strong{color:var(--t1);font-weight:700}
+  .article-body code{font-family:'JetBrains Mono',monospace;font-size:.875em;background:#F5F3FF;color:#5B21B6;padding:2px 7px;border-radius:5px;border:1px solid #DDD6FE}
+  pre{background:#0D0A1E;border-radius:var(--r-md);padding:20px 24px;margin:24px 0;overflow-x:auto}
+  pre code{background:none;border:none;color:#C4B5FD;font-size:.875rem;padding:0;line-height:1.7}
+  .callout{background:var(--bg-alt);border:1.5px solid #DDD6FE;border-radius:var(--r-md);padding:24px 28px;margin:32px 0}
+  .callout-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);font-weight:600;margin-bottom:10px}
+  .callout p{margin-bottom:0;color:var(--t1)}
+  .step-card{display:flex;gap:20px;margin-bottom:28px;align-items:flex-start}
+  .step-num{width:36px;height:36px;border-radius:50%;background:var(--grad);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem;flex-shrink:0;margin-top:2px}
+  .step-content h3{margin-top:0;margin-bottom:8px}
+  .nl-box{background:var(--bg-dark);border-radius:var(--r-xl);padding:clamp(32px,5vw,48px);margin:48px 0;text-align:center}
+  .nl-box h3{font-size:1.375rem;font-weight:800;color:#fff;letter-spacing:-0.03em;margin-bottom:8px}
+  .nl-box p{font-size:.9375rem;color:rgba(255,255,255,0.6);margin-bottom:24px}
+  .nl-form{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:480px;margin:0 auto}
+  .nl-input{flex:1;min-width:200px;padding:12px 16px;border-radius:10px;border:1.5px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.07);color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:.9375rem;outline:none}
+  .nl-input::placeholder{color:rgba(255,255,255,0.35)}
+  .nl-btn{padding:12px 24px;border-radius:10px;background:linear-gradient(135deg,#7C3AED,#2563EB);color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:.9375rem;font-weight:700;border:none;cursor:pointer}
+  .nl-note{font-size:.75rem;color:rgba(255,255,255,0.3);margin-top:10px}
+  .cta-strip{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;background:#F5F3FF;border:1px solid #DDD6FE;border-radius:var(--r-xl);padding:28px 32px;margin:40px 0}
+  .cta-strip-text h4{font-size:1.0625rem;font-weight:800;color:var(--t1);margin-bottom:4px}
+  .cta-strip-text p{font-size:.875rem;color:var(--t2)}
+  .btn-grad{padding:12px 24px;border-radius:10px;background:var(--grad);color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:.875rem;font-weight:700;border:none;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+  .workflow-diagram{background:#0D0A1E;border-radius:var(--r-xl);padding:24px;margin:28px 0;display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center}
+  .wf-node{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 16px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:12px;min-width:80px;text-align:center}
+  .wf-node-icon{font-size:20px}
+  .wf-node-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,0.6);letter-spacing:0.06em}
+  .wf-arrow{color:rgba(255,255,255,0.3);font-size:18px;flex-shrink:0}
+  footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;color:var(--t3);font-size:.8125rem}
+  footer a{color:var(--purple)}
+</style>
+</head>
+<body>
+<nav><div class="container-wide nav-inner">
+  <a href="/" class="nav-logo">
+    <img src="../assets/flowvanta-icon.png" alt="Flowvanta" style="width:32px;height:32px;object-fit:contain">
+    Flowvanta
+  </a>
+  <a href="/blog/" class="nav-back">← All articles</a>
+</div></nav>
+
+<div class="container">
+  <article>
+    <header class="article-hero">
+      <span class="article-tag">Workflow Guide</span>
+      <h1 class="article-title">How to Automate Your Sales CRM with n8n and HubSpot</h1>
+      <div class="article-meta">
+        <div class="meta-author">
+          <img src="../assets/flowvanta-icon.png" alt="Flowvanta" style="width:28px;height:28px;border-radius:50%;object-fit:contain">
+          Flowvanta Engineering
+        </div>
+        <span>June 2026</span>
+        <span>10 min read</span>
+      </div>
+    </header>
+
+    <div class="article-body">
+
+      <p>Most sales teams are spending hours every week doing work that software should handle — copying leads from contact forms into HubSpot, manually updating deal stages, sending follow-up emails one by one. n8n eliminates all of it.</p>
+
+      <p>This guide walks through building a complete n8n → HubSpot CRM automation: auto-creating contacts, enriching them, scoring leads, and triggering personalised follow-up sequences — without writing a line of code.</p>
+
+      <div class="callout">
+        <div class="callout-label">What you'll build</div>
+        <p>A 6-node workflow that captures form submissions, creates/updates HubSpot contacts, scores the lead, assigns to the right rep, and triggers an automated follow-up sequence. All in under 2 seconds.</p>
+      </div>
+
+      <h2>The Workflow Architecture</h2>
+
+      <div class="workflow-diagram">
+        <div class="wf-node"><div class="wf-node-icon">📋</div><div class="wf-node-label">Form Trigger</div></div>
+        <div class="wf-arrow">→</div>
+        <div class="wf-node"><div class="wf-node-icon">🔍</div><div class="wf-node-label">Enrich Lead</div></div>
+        <div class="wf-arrow">→</div>
+        <div class="wf-node"><div class="wf-node-icon">🤖</div><div class="wf-node-label">Score Lead</div></div>
+        <div class="wf-arrow">→</div>
+        <div class="wf-node"><div class="wf-node-icon">👤</div><div class="wf-node-label">HubSpot Contact</div></div>
+        <div class="wf-arrow">→</div>
+        <div class="wf-node"><div class="wf-node-icon">📧</div><div class="wf-node-label">Follow-up Seq</div></div>
+        <div class="wf-arrow">→</div>
+        <div class="wf-node"><div class="wf-node-icon">💬</div><div class="wf-node-label">Slack Notify</div></div>
+      </div>
+
+      <h2>Step 1 — Set Up Your Trigger</h2>
+
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h3>Webhook or HubSpot Form trigger</h3>
+          <p>Add a <strong>Webhook node</strong> as your trigger. This single URL accepts submissions from any form tool — Typeform, Tally, your own HTML form, or even a Zapier webhook if you're migrating. Set the method to POST.</p>
+        </div>
+      </div>
+
+      <p>If you're using HubSpot forms natively, use the <strong>HubSpot Trigger</strong> node instead — set it to fire on "New Form Submission." Connect your HubSpot account via OAuth in the credentials panel.</p>
+
+<pre><code>{
+  "firstName": "Sarah",
+  "lastName": "Chen",
+  "email": "sarah@techstartup.io",
+  "company": "TechStartup",
+  "message": "We need to automate our onboarding workflow",
+  "source": "website-contact-form"
+}</code></pre>
+
+      <h2>Step 2 — Enrich the Lead</h2>
+
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h3>Add an HTTP Request node for enrichment</h3>
+          <p>Connect an <strong>HTTP Request node</strong> to call a data enrichment API (Clearbit, Hunter.io, or Apollo.io). Pass the email from the previous node as a query parameter. This returns company size, industry, LinkedIn URL, and tech stack — automatically.</p>
+        </div>
+      </div>
+
+<pre><code>// HTTP Request node config
+Method: GET
+URL: https://company.clearbit.com/v2/companies/find
+Query params:
+  domain: {{ $json.email.split('@')[1] }}
+Headers:
+  Authorization: Bearer {{ $credentials.clearbitApiKey }}</code></pre>
+
+      <p>If you don't have an enrichment API, skip to Step 3. You can always add enrichment later without rebuilding the workflow.</p>
+
+      <h2>Step 3 — Score the Lead with AI</h2>
+
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h3>OpenAI node for intelligent lead scoring</h3>
+          <p>Add an <strong>OpenAI node</strong>. Feed it the form submission and enrichment data. Ask it to classify the lead as Hot / Warm / Cold and assign a score from 1–10 based on your ideal customer profile.</p>
+        </div>
+      </div>
+
+<pre><code>// System prompt
+You are a sales qualification assistant for a B2B automation agency.
+Score this lead 1-10 and classify as Hot/Warm/Cold.
+
+Ideal customer: B2B SaaS or agency, 10-200 employees,
+mentions automation pain, has budget signals.
+
+Return JSON: { "score": 8, "tier": "Hot", "reason": "..." }
+
+// User prompt
+Lead data: {{ JSON.stringify($json) }}</code></pre>
+
+      <h2>Step 4 — Create or Update the HubSpot Contact</h2>
+
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h3>HubSpot node — Upsert Contact</h3>
+          <p>Add a <strong>HubSpot node</strong> set to "Create or Update Contact." Map the fields from your form submission and enrichment data. Add your AI lead score as a custom HubSpot property.</p>
+        </div>
+      </div>
+
+      <p>Key field mappings to set up in n8n:</p>
+      <ul>
+        <li><code>email</code> → Contact Email (used as the upsert key)</li>
+        <li><code>firstName</code>, <code>lastName</code> → First Name, Last Name</li>
+        <li><code>company</code> → Company Name</li>
+        <li><code>ai_lead_score</code> → your custom HubSpot property</li>
+        <li><code>lead_source</code> → "n8n Workflow Automation"</li>
+        <li><code>lifecyclestage</code> → "lead"</li>
+      </ul>
+
+      <h2>Step 5 — Trigger the Right Follow-up Sequence</h2>
+
+      <div class="step-card">
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <h3>IF node → branch by lead tier</h3>
+          <p>Add an <strong>IF node</strong> to branch your workflow based on the AI lead tier. Hot leads go to your fast-track sequence. Warm leads go to a nurture sequence. Cold leads are added to a newsletter list.</p>
+        </div>
+      </div>
+
+<pre><code>// IF node condition
+{{ $json.tier }} equals "Hot"
+  → true branch: enroll in Hot Lead Sequence
+  → false branch: check Warm / Cold</code></pre>
+
+      <p>For each branch, add a <strong>HubSpot node</strong> set to "Add Contact to Sequence." Select the appropriate sequence ID from the dropdown — n8n fetches these automatically from your HubSpot account.</p>
+
+      <h2>Step 6 — Notify Your Sales Team on Slack</h2>
+
+      <div class="step-card">
+        <div class="step-num">6</div>
+        <div class="step-content">
+          <h3>Slack node — instant sales alert</h3>
+          <p>Add a <strong>Slack node</strong> on the Hot lead branch. Send a formatted message to your #sales channel with the contact details, lead score, and a direct link to the HubSpot contact. Your rep sees a new hot lead before they even check their email.</p>
+        </div>
+      </div>
+
+<pre><code>// Slack message template
+🔥 *Hot Lead — Score {{ $json.score }}/10*
+
+*Name:* {{ $json.firstName }} {{ $json.lastName }}
+*Company:* {{ $json.company }}
+*Email:* {{ $json.email }}
+*Reason:* {{ $json.reason }}
+
+<{{ $json.hubspotContactUrl }}|View in HubSpot></code></pre>
+
+      <h2>Optimisations Worth Adding</h2>
+
+      <h3>Deduplication</h3>
+      <p>Add a <strong>HubSpot node</strong> before Step 4 to search for existing contacts by email. If the contact exists, route to an "Update" branch instead of creating a duplicate. This keeps your CRM clean.</p>
+
+      <h3>Deal creation for hot leads</h3>
+      <p>On the Hot lead branch, add another <strong>HubSpot node</strong> set to "Create Deal." Automatically create a deal associated with the contact, set the deal stage to "Appointment Scheduled," and assign to the relevant rep based on territory or round-robin logic.</p>
+
+      <h3>Error handling</h3>
+      <p>Add an <strong>Error Trigger node</strong> as a global error handler. Route failures to a Slack #alerts channel with the full error payload. This way you never miss a lead because of a transient API failure.</p>
+
+      <div class="callout">
+        <div class="callout-label">Results from a real deployment</div>
+        <p>A SaaS client running this exact workflow went from a 4-hour average lead response time to under 2 minutes — for every inbound lead, 24/7. Hot leads were contacted before the prospect even left the website.</p>
+      </div>
+
+      <h2>Common Questions</h2>
+
+      <h3>Do I need a paid HubSpot plan?</h3>
+      <p>The basic contact creation and update operations work on HubSpot's free plan. Sequences and some workflow triggers require a paid Sales Hub plan. The Slack notification and lead scoring work regardless of your HubSpot tier.</p>
+
+      <h3>Can I use this with Zoho or Salesforce instead of HubSpot?</h3>
+      <p>Yes. n8n has native integrations for Zoho CRM, Salesforce, Pipedrive, and most other CRMs. The workflow logic stays identical — just swap the HubSpot nodes for your CRM's equivalent nodes.</p>
+
+      <h3>How do I handle leads from multiple sources?</h3>
+      <p>Create separate webhooks for each source (website form, LinkedIn ads, Typeform, etc.) and merge them into a single normalisation node that maps all fields to a standard schema before the enrichment step.</p>
+
+    </div>
+
+    <div class="nl-box">
+      <h3>Get the full workflow JSON + more guides</h3>
+      <p>Weekly n8n automations, real case studies, and workflow templates straight to your inbox.</p>
+      <form class="nl-form" onsubmit="handleNl(event)">
+        <input type="email" class="nl-input" placeholder="you@company.com" required id="nlEmail">
+        <button type="submit" class="nl-btn">Subscribe →</button>
+      </form>
+      <p class="nl-note" id="nlMsg">No spam. Unsubscribe any time.</p>
+    </div>
+
+    <div class="cta-strip">
+      <div class="cta-strip-text">
+        <h4>Want this built for your CRM?</h4>
+        <p>We scope, build, and hand over production-ready n8n + HubSpot workflows.</p>
+      </div>
+      <a href="/#contact" class="btn-grad">Book a free call →</a>
+    </div>
+
+  </article>
+</div>
+
+<footer><div class="container">© 2026 <a href="/">Flowvanta.dev</a> — All rights reserved</div></footer>
+
+<script>
+function handleNl(e) {
+  e.preventDefault();
+  const email = document.getElementById('nlEmail').value;
+  fetch('https://formsubmit.co/ajax/vivek@flowvanta.dev', {
+    method:'POST', headers:{'Content-Type':'application/json',Accept:'application/json'},
+    body: JSON.stringify({_subject:'Blog subscriber — n8n HubSpot CRM', email, source:'blog/n8n-hubspot-crm-automation', _template:'table'})
+  }).catch(()=>{});
+  document.getElementById('nlMsg').textContent = "✅ You're subscribed!";
+  document.getElementById('nlMsg').style.color = '#6EE7B7';
+  e.target.querySelector('input').value = '';
+}
+</script>
+</body>
+</html>
